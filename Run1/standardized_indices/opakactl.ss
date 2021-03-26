@@ -163,14 +163,16 @@
 #_5:  0/1 for biasadj or not
 #_6:  0/1 to float
 #_   fleet      link link_info  extra_se   biasadj     float  #  fleetname
-        2         1         0         0         0         0  #  CPUE_DSH_old
-         3         1         0         0         0         0  #  CPUE_DSH_recent
+        2         1         0         0         0        0  #  CPUE_DSH_old
+        3         1         0         0         0        0  #  CPUE_DSH_recent
+        4         1         0         0         0        0  #  BFISH
      -9999 0 0 0 0 0
 #
 #_Q_parms(if_any);Qunits_are_ln(q)
-#_          LO            HI          INIT         PRIOR         PR_SD       PR_type      PHASE    env-var    use_dev   dev_mnyr   dev_mxyr     dev_PH      Block    Blk_Fxn  #  parm_name
-           -20            20      -4.68922             0             1             0          1          0          0          0          0          0          0          0  #  LnQ_base_CPUE_DSH_old(2)
-           -20            20      -6.72368             0             2             0          1          0          0          0          0          0          0          0  #  LnQ_base_CPUE_DSH_recent(3)
+#_  LO    HI   INIT   PRIOR  PR_SD   PR_type  PHASE  env-var  use_dev   dev_mnyr dev_mxyr  dev_PH  Block Blk_Fxn  #  parm_name
+-20    20  -4.68922    0       1     0      1    0      0     0     0   0     0     0  #  LnQ_base_CPUE_DSH_old(2)
+-20    20  -6.72368    0       2     0      1    0      0     0     0   0     0     0  #  LnQ_base_CPUE_DSH_recent(3)
+-20    20  -1          0       1     0      1    0      0     0     0   0     0     0  # LnQ_base_BFISH   
 #_no timevary Q parameters
 #
 #_size_selex_patterns
@@ -194,6 +196,7 @@
  1 0 0 0 # 1 Catch_Com_DSH
  5 0 0 1 # 2 CPUE_DSH_old
  5 0 0 1 # 3 CPUE_DSH_recent
+ 5 0 0 1 # 4 BFISH
 
 
 ##
@@ -218,6 +221,7 @@
  0 0 0 0 # 1 Catch_Com_DSH
  0 0 0 0 # 2 CPUE_DSH_old
  0 0 0 0 #3 CPUE_DSH_recent
+ 0 0 0 0 #4 BFISH
 #
 #_          LO            HI          INIT         PRIOR         PR_SD       PR_type      PHASE    env-var    use_dev   dev_mnyr   dev_mxyr     dev_PH      Block    Blk_Fxn  #  parm_name
 # 1   Catch_Com_DSH LenSelex
@@ -229,6 +233,9 @@
 # 3   CPUE_DSH_recent LenSelex
             -1            -1            -1            -1            99             0         -4          0          0          0          0          0          0          0  #  SizeSel_P1_CPUE_DSH_recent(7)
             -1            -1            -1            -1            99             0         -4          0          0          0          0          0          0          0  #  SizeSel_P2_CPUE_DSH_recent(7)
+# 4   BFISH LenSelex
+            -1            -1            -1            -1            99             0         -4          0          0          0          0          0          0          0  #  SizeSel_P1_BFISH
+            -1            -1            -1            -1            99             0         -4          0          0          0          0          0          0          0  #  SizeSel_P2_BFISH
 # 1   Catch_Com_DSH AgeSelex
 # 2  CPUE_DSH_old AgeSelex
 # 3   CPUE_DSH_recent AgeSelex
@@ -255,6 +262,7 @@
 #_Factor  Fleet  Value
       1      2       0.1
       1      3       0.1
+      1      4       0.1
  -9999   1    0  # terminator
 #
 5 #_maxlambdaphase

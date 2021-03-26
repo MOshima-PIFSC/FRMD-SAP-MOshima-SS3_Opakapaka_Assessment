@@ -10,12 +10,13 @@ b_mu <- mean(bfish$Biomass_kg)
 bfish$IOA <- bfish$Biomass_kg / b_mu
 bfish$CV <- bfish$SE_Biomass_kg/b_mu
 
+bfish$Biomass_kg/min(bfish$Biomass_kg)
 
 ### switching standardized data into dat file
 opaka.dat <- SS_readdat(file = "./Run1/opakadat.ss", version = "3.30")
 
 cpue <- opaka.dat$CPUE
-nrow(cpue)
+head(cpue)
 class(cpue)
 cpue <- cpue %>% 
     group_by(index) %>% 
@@ -35,4 +36,5 @@ SS_writedat(opaka.dat, outfile = "./Run1/standardized_indices/opakadat.ss", over
 
 rep. <- SS_output("./Run1/standardized_indices")
 SS_plots(rep.)
+
 

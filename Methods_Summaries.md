@@ -15,11 +15,19 @@ $$
 $(1000000 * 2.20462)$ converts biomass from kg to millions of lbs (units in SS)  
 $(25892*104.4653)$ represents the total number of sample grids in the MHI area and the assumed swept area of the camera gear 
 
+* in vermilion assessment the landings data were assumed to have constant variance and interannual variation in the CPUE and survey indices were estimated through the standardization. For the indices, the CV (SE/mean) was converted to log(SE) using $SE = sqrt(log_e(1+CV)^2)$ 
+
+
 
 #### standardization:  
 * $z = (B_{yr}-B_{ave})/\sigma$  
       
 * $B_{yr}/B_{ave}$ 
+
+
+#### selectivity:  
+used the same selectivity for the BFISH survey as the commercial fishery because the fishing techniques are almost the exact same thing
+
 
 #### Questions for John:  
 1. Should I set end year to 2019 to include the final year of bfish assessment data?

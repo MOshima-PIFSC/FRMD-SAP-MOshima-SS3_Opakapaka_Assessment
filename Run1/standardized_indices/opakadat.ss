@@ -11,12 +11,13 @@
 -1 #_Ngenders
 30 #_Nages
 1 #_N_areas
-3 #_Nfleets
+4 #_Nfleets
 #_fleetinfo
 #_type	surveytiming	area	units	need_catch_mult	fleetname
 1	-1.0	1	1	0	Catch_Com_DSH  	#_1
 3	 0.5	1	1	0	CPUE_DSH_old   	#_2
 3	 0.5	1	1	0	CPUE_DSH_recent	#_3
+3    0.5    1   1   0   BFISH           #_4
 #_Catch data
 #_year	season	fleet	catch	catch_se
  -999	1	1	205.12	0.01	#_1         
@@ -99,6 +100,7 @@
 1	1	0	0	#_Catch_Com_DSH  
 2	1	0	0	#_CPUE_DSH_old   
 3	1	0	0	#_CPUE_DSH_recent
+4   1   0   0   #_BFISH
 #
 #_CPUE_data
 #_year	seas	index	obs	se_log
@@ -172,7 +174,10 @@
  2015	7	3	1.297708	0.006255265	#_68        
  2016	7	3	1.483984	0.007706763	#_69        
  2017	7	3	1.207854	0.008397952	#_70        
- 2018	7	3	1.039549	0.009296499	#_71        
+ 2018	7	3	1.039549	0.009296499	#_71    
+ 2016   7   4   1.8094014   0.6085939
+ 2017   7   4   0.9372351   0.1722074 
+ 2018   7   4   0.6206519   0.1727341
 -9999	0	0	0.000000	0.000000000	#_terminator
 0 #_N_discard_fleets
 #_discard_units (1=same_as_catchunits(bio/num); 2=fraction; 3=numbers)
