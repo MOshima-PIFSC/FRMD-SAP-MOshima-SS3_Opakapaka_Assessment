@@ -15,11 +15,11 @@ $$
 $(1000000 * 2.20462)$ converts biomass from kg to millions of lbs (units in SS)  
 $(25892*104.4653)$ represents the total number of sample grids in the MHI area and the assumed swept area of the camera gear 
 
-* in vermilion assessment the landings data were assumed to have constant variance and interannual variation in the CPUE and survey indices were estimated through the standardization. For the indices, the CV (SE/mean) was converted to log(SE) using $SE = sqrt(log_e(1+CV)^2)$ 
+* in vermilion assessment the landings data were assumed to have constant variance and interannual variation in the CPUE and survey indices were estimated through the standardization. For the indices, the CV (SE/mean) was converted to log(SE) using $SE = sqrt(log_e(1+CV)^2)$ The SE was normlized to a mean of 0.2. 
 
 
 
-#### standardization:  
+#### normalization:  
 * $z = (B_{yr}-B_{ave})/\sigma$  
       
 * $B_{yr}/B_{ave}$ 
