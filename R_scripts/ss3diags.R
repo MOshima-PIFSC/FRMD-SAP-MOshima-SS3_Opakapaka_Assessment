@@ -4,37 +4,25 @@ library(ss3diags)
 library(r4ss)
 library(tidyverse)
 
-rep. <- SS_output("./Run1/Indices")
+dir. <- "./Run2/Indices"
+dir. <- "./Run1"
+rep. <- SS_output(dir.)
 
 SSplotJABBAres(rep., 
 print = TRUE, 
-plotdir = "./Run1/Indices")
+plotdir = dir.)
 
 SSrunstest(rep., quants = "cpue")
 SSplotRunstest(rep., 
                subplots = "cpue",
-               plotdir = "./Run1/Indices",
+               plotdir = dir.,
                print = TRUE)
-
-rep.normalized <- SS_output("./Run1/normalized_indices")
-
-SSplotJABBAres(rep.normalized, 
-print = TRUE, 
-plotdir = "./Run1/normalized_indices")
-
-SSrunstest(rep.normalized, quants = "cpue")
-SSplotRunstest(rep., 
-               subplots = "cpue",
-               plotdir = "./Run1/normalized_indices",
-               print = TRUE)
-
-
 
 ## Recruitment profiling
 head(rep.$parameters, n = 20)
 
 ro.vec <- seq(1, 10, length.out = 30)
-SS_profile(dir = "./Run1/Indices/R0_profiling/", 
+SS_profile(dir = paste0(dir., "/R0_profiling/"), 
            masterctlfile = "control.ss_new", 
            newctlfile = "control_mod.ss",
            string = "R0",
@@ -43,12 +31,12 @@ SS_profile(dir = "./Run1/Indices/R0_profiling/",
 
 # read the output files (with names like Report1.sso, Report2.sso, etc.)
 Nprofile <- length(ro.vec)
-profilemodels <- SSgetoutput(dirvec="./Run1/Indices/R0_profiling/", keyvec=1:Nprofile)
+profilemodels <- SSgetoutput(dirvec= paste0(dir., "/R0_profiling/"), keyvec=1:Nprofile)
 # summarize output
 profilesummary <- SSsummarize(profilemodels)
 
 # OPTIONAL COMMANDS TO ADD MODEL WITH PROFILE PARAMETER ESTIMATED
-MLEmodel <- SS_output("./Run1/Indices")
+MLEmodel <- SS_output(dir.)
 profilemodels$MLE <- MLEmodel
 profilesummary <- SSsummarize(profilemodels)
 # END OPTIONAL COMMANDS
@@ -70,3 +58,7 @@ SSplotProfile(profilesummary,           # summary object
               component.labels = mainlike_components_labels,
               profile.label=expression(log(italic(R)[0]))) # axis label
 
+PinerPlot(profilesummary, 
+          print = TRUE,
+          component = "Surv_like",
+          plotdir = paste0(dir., "/R0_profiling"))

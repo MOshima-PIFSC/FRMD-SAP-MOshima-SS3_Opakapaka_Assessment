@@ -59,8 +59,26 @@ opaka.dat$CPUE <- cpue
 
 SS_writedat(opaka.dat, outfile = "./Run1/normalized_indices/opakadat.ss", overwrite = TRUE)
 
-rep. <- SS_output("./Run1/Indices")
+rep. <- SS_output("./Run2/Indices")
 SS_plots(rep.)
 
+rownames(rep.$parameters)
+rep.$parameters %>% 
+filter(str_detect(rownames(.), "steep")) %>% 
+select(1:12)
 
+rep.$parameters %>% 
+select(Value, Min, Max, Gradient)
 
+rep.$rmse_table
+rep.$Size_comp_Eff_N_tuning_check
+rep.$index_variance_tuning_check
+
+rep.$parameters_with_highest_gradients
+
+head(rep.$CoVar, n = 5)
+rep.$CoVar %>% 
+filter(label.j == "SR_LN(R0)") %>% 
+filter(corr >= 0.97 | corr <= -0.97)
+
+rep.$likelihoods_by_fleet
