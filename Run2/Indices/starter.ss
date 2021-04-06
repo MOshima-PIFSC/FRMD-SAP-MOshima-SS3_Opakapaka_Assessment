@@ -19,7 +19,7 @@ modified_ctl.ss #_ctlfile
 1 #_MCMCthin
 0.1 #_jitter_fraction
 1949 #_minyr_sdreport
-2018 #_maxyr_sdreport
+2019 #_maxyr_sdreport
 0 #_N_STD_yrs
 1e-04 #_converge_criterion
 0 #_retro_yr

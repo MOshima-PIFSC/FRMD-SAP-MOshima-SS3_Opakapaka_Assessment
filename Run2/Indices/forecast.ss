@@ -6,14 +6,14 @@
 0.3 # SPR target (e.g. 0.40)
 0.4 # Biomass target (e.g. 0.40)
 #_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF, beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)
- 2018 2018 2018 2018 2018 2018 1949 2018 1949 2018
+ 2019 2019 2019 2019 2019 2019 1949 2019 1949 2019
 1 #Bmark_relF_Basis: 1 = use year range; 2 = set relF same as forecast below
 #
 4 # Forecast: 0=none; 1=F(SPR); 2=F(MSY) 3=F(Btgt); 4=Ave F (uses first-last relF yrs); 5=input annual F scalar
 1 # N forecast years 
 0 # F scalar (only used for Do_Forecast==5)
 #_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_recruits, end_recruits  (enter actual year, or values of 0 or -integer to be rel. endyr)
- 2018 2018 2018 2018 1949 2018
+ 2019 2019 2019 2019 1949 2019
 0 # Forecast selectivity (0=do not use; 1=specify one selectivity for all fishing fleets (not implemented); 2=specify selectivity per fishing fleet (not implemented))
 2 # Control rule method (1=catch=f(SSB) west coast; 2=F=f(SSB) ) 
 0.4 # Control rule Biomass level for constant F (as frac of Bzero, e.g. 0.40); (Must be > the no F level below) 
@@ -24,7 +24,7 @@
 0 #_Forecast loop control #3 (reserved for future bells&whistles) 
 0 #_Forecast loop control #4 (reserved for future bells&whistles) 
 0 #_Forecast loop control #5 (reserved for future bells&whistles) 
-2018  #FirstYear for caps and allocations (should be after years with fixed inputs) 
+2019  #FirstYear for caps and allocations (should be after years with fixed inputs) 
 0 # stddev of log(realized catch/target catch) in forecast (set value>0.0 to cause active impl_error)
 0 # Do West Coast gfish rebuilder output (0/1) 
 2017 # Rebuilder:  first year catch could have been set to zero (Ydecl)(-1 to set to 1999)

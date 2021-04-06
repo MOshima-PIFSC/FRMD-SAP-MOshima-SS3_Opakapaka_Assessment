@@ -3,16 +3,16 @@
 #Foreign copyrights may apply. See copyright.txt for more information.
 #_user_support_available_at:NMFS.Stock.Synthesis@noaa.gov
 #_user_info_available_at:https://vlab.ncep.noaa.gov/group/stock-synthesis
-#_Start_time: Fri Apr 02 16:28:46 2021
+#_Start_time: Tue Apr 06 16:34:02 2021
 #_Number_of_datafiles: 1
 #C data file created using the SS_writedat function in the R package r4ss
-#C file write time: 2021-03-30 13:30:58
+#C file write time: 2021-04-06 16:21:02
 #_observed data: 
 #V3.30.16.02;_2020_09_21;_safe;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_12.2
 #Stock Synthesis (SS) is a work of the U.S. Government and is not subject to copyright protection in the United States.
 #Foreign copyrights may apply. See copyright.txt for more information.
 1949 #_StartYr
-2018 #_EndYr
+2019 #_EndYr
 1 #_Nseas
  12 #_months/season
 2 #_Nsubseasons (even number, minimum is 2)
@@ -114,6 +114,7 @@
 2016 1 1 185 0.01
 2017 1 1 182.1 0.01
 2018 1 1 159.89 0.01
+2019 1 1 159.89 0.01
 -9999 0 0 0 0
 #
  #_CPUE_and_surveyabundance_observations
@@ -200,6 +201,7 @@
 2016 7 4 4.47084e+06 14.2235 #_ BFISH
 2017 7 4 2.31581e+06 12.961 #_ BFISH
 2018 7 4 1.53357e+06 12.9641 #_ BFISH
+2019 7 4 1.56336e+06 12.8209 #_ BFISH
 -9999 1 1 1 1 # terminator for survey observations 
 #
 0 #_N_fleets_with_discard

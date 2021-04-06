@@ -37,9 +37,11 @@ SSplotProfile(profilesummary,           # summary object
               profile.string = "R0", # substring of profile parameter
               profile.label="Ln(R0)") # axis label
 
-
+## Piner plot shows the likelihood components by data type over the profiled parameter
 PinerPlot(profilesummary, 
           print = TRUE,
           component = "Surv_like",
           plotdir = paste0(dir., "/R0_profiling"),
           minfraction = 0.0)
+
+
