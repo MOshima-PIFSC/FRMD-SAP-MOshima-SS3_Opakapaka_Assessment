@@ -30,5 +30,3 @@ used the same selectivity for the BFISH survey as the commercial fishery because
 
 
 #### Questions for John:  
-1. Should I set end year to 2019 to include the final year of bfish assessment data?
-   1. maybe try it both ways (end year 2018 and end year 2019 bc going to be adding more years of data at some point)
