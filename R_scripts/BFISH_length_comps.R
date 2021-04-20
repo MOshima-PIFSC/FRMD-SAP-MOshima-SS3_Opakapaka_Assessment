@@ -27,15 +27,13 @@ mutate(GEAR = "Fishing") %>%
 bind_rows(opaka_lengths) %>% 
 mutate(bin = cut(LENGTH_CM, seq(min(LENGTH_CM), max(LENGTH_CM) + 2, 2), right = FALSE))
 
-bw <- 2 * IQR(opaka_lengths$LENGTH_CM) / length(opaka_lengths$LENGTH_CM)^(1/3)
 
 opaka_lengths %>% 
 ggplot(aes(LENGTH_CM, colour = GEAR)) +
-geom_freqpoly(binwidth = 3) +
+geom_freqpoly(aes(y = stat(count / sum(count)))) +
 facet_wrap(~YEAR, scales = "free") +
 theme_classic()
 
-grid.arrange(p1, p2, nrow = 1)
 
 plot_fun = function(data, x, z, bw) {
      ggplot(data, aes(x = .data[[x]], colour = .data[[z]]) ) +
@@ -44,16 +42,13 @@ plot_fun = function(data, x, z, bw) {
           theme_bw()
 }
 
-opaka_lengths  %>% 
-plot_fun(x = "LENGTH_CM", z = "GEAR", bw = 3)
-
 bw.vec <- seq(1, 5, by = 1)
 
 opaka_lengths %>% 
 plot_fun(., x = "LENGTH_CM", z = "GEAR", bw = bw.vec)
 
 plots = map(bw.vec, ~ggplot(data = opaka_lengths, aes(x = LENGTH_CM, colour = GEAR) ) +
-          geom_freqpoly(binwidth = .x) +
+          geom_freqpoly(aes(y = stat(count / sum(count))), binwidth = .x)  +
           facet_wrap(~YEAR, scales = "free")+
           theme_bw()
 )
