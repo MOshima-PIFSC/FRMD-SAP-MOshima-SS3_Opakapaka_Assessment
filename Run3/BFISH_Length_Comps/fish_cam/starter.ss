@@ -4,7 +4,7 @@
 #C file write time: 2021-04-05 10:38:01
 #
 opakadat.ss #_datfile
-modified_ctl.ss #_ctlfile
+opakactl.ss #_ctlfile
 0 #_init_values_src
 1 #_run_display_detail
 1 #_detailed_age_structure

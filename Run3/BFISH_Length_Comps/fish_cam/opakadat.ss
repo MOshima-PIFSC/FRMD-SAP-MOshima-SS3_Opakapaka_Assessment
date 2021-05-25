@@ -91,8 +91,8 @@
  2016	1	1	185.00	0.01	#_69        
  2017	1	1	182.10	0.01	#_70        
  2018	1	1	159.89	0.01	#_71        
- 2019	1	1	159.89	0.01	#_72  
- 2020   1   1   159.89  0.01          
+ 2019	1	1	159.89	0.01	#_72        
+ 2020	1	1	159.89	0.01	#_73        
 -9999	0	0	  0.00	0.00	#_terminator
 #_CPUE_and_surveyabundance_observations
 #_Units:  0=numbers; 1=biomass; 2=F; >=30 for special types
@@ -202,14 +202,13 @@
 0 #_use_lencomp
 0 #_N_agebins
 #
-#_MeanSize_at_Age_obs 
+#_MeanSize_at_Age_obs
 0 #_use_MeanSize_at_Age_obs
 0 #_N_environ_variables
-#_Generalized_size_composition_data (see page 63 of user manual for details)
 1 #_N_sizefreq_methods
 30 #_nbins_per_method
-2 #_units_per_method (1 = biomass, 2 = numbers)
-1 #_scale_per_method (1 = kg, 2 = lbs, 3 = cm, 4 = inches)
+2 #_units_per_method
+1 #_scale_per_method
 1e-09 #_mincomp_per_method
 69 #_Nobs_per_method
 #
