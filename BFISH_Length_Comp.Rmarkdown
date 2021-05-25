@@ -133,7 +133,7 @@ pull(DROP_CD)
 ```
 
 #### Sites that caught more than 5 fish between 50 and 60 cm
-```{r}
+```{r echo=FALSE}
 cam %>% 
 filter(LENGTH_CM > 50 & LENGTH_CM < 60) %>% 
 group_by(DROP_CD) %>% 
@@ -171,7 +171,7 @@ pull(SAMPLE_ID)
 
 
 #### Sites that caught more than 1 fish between 20 and 25 cm
-```{r}
+```{r echo=FALSE}
 fish %>% 
 filter(LENGTH_CM > 20 & LENGTH_CM < 25)  %>% 
 group_by(SAMPLE_ID) %>% 
