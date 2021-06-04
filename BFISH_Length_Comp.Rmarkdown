@@ -2,13 +2,18 @@
 title: "BFISH Length Comp Investigations"
 author: "Meg Oshima"
 date: "5/21/2021"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+  
 ---
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
 library(tidyverse)
 library(r4ss)
 library(magrittr)
+library(gt)
 
 camera_lengths <- read.csv("./Data/BFISH 2016-2019 Camera Lengths.csv")
 fishing_lengths <- read.csv("./Data/BFISH 2016-2019 Research Fishing Lengths.csv")
@@ -23,7 +28,7 @@ filter(str_detect(SPECIES_CD, sp_code)) %>%
 filter(str_detect(BFISH, "_S", negate = TRUE)) %>% 
 select(-X)
 
-summary(cam)
+summary(camera_lengths)
 
 ```
 
@@ -45,7 +50,7 @@ geom_vline(aes(xintercept = 54.5),
 geom_density(aes(x = LENGTH_CM), data = fish, color = "gray60")
 ```
 
-### What is causing the mode in the smaller size classes in the BFISH camera data?  
+#### What is causing the mode in the smaller size classes in the BFISH camera data?  
 
   *   Which sites are most of these samples coming from?
   *   Which islands are these samples from?  
@@ -85,12 +90,13 @@ filter(str_detect(DROP_CD, paste0(small_mode_drops, collapse = "|"))) %>%
 filter(LENGTH_CM < 20) %>% 
 group_by(DROP_CD) %>% 
 summarise(n = n()) %>% 
-  arrange(desc(n))
+  arrange(desc(n)) %>% 
+  gt()
 
 ```
 
 
-```{r echo=FALSE, fig.cap="6 camera drops had 5 or more fish between 10 - 15 cm. The samples came from Oahu and all were caught between 100 - 110 m deep (which is the first quantile of depths sampled). All from the same day in 2019."}
+```{r echo=FALSE, fig.cap="6 camera drops had 5 or more fish between 10 - 15 cm. The samples came from Oahu and all were caught between 100 - 110 m deep (which is the first quantile of depths sampled)."}
 cam %>% 
 filter(str_detect(DROP_CD, paste0(small_mode_drops, collapse = "|")))  %>% 
 ggplot(aes(x = LENGTH_CM, y = OFFICIAL_DEPTH_M)) + 
@@ -102,7 +108,7 @@ theme_classic()
 
 
 
-### What is causing the mode in the larger size classes in the BFISH camera data?  
+#### What is causing the mode in the larger size classes in the BFISH camera data?  
 
   *   Which sites are most of these samples coming from?
   *   Which islands are these samples from?  
@@ -139,7 +145,8 @@ filter(LENGTH_CM > 50 & LENGTH_CM < 60) %>%
 group_by(DROP_CD) %>% 
 summarise(n = n()) %>% 
 filter(n > 5) %>% 
-  arrange(desc(n))
+  arrange(desc(n)) %>% 
+  gt()
 
 ```
 
@@ -159,7 +166,7 @@ theme_classic()
 summary(fish)
 ```
 
-```{r echo=FALSE, fig.cap= "4 fishing events had more than 1 fish between 20 and 25 cm. The samples came from Oahu (n = 2) and Maui Nui (n = 2) and were caught at depths 89 to 142 m. The catches occurred in 2017 (n = 3) and 2019 (n = 1)."}
+```{r echo=FALSE}
 small_mode_fish <- fish %>% 
 filter(LENGTH_CM > 20 & LENGTH_CM < 25)  %>% 
 group_by(SAMPLE_ID) %>% 
@@ -177,8 +184,11 @@ filter(LENGTH_CM > 20 & LENGTH_CM < 25)  %>%
 group_by(SAMPLE_ID) %>% 
 summarise(n = n()) %>% 
 filter(n > 1) %>% 
-  arrange(desc(n))
+  arrange(desc(n)) %>% 
+  gt()
+```
 
+```{r echo=FALSE, fig.cap= "4 fishing events had more than 1 fish between 20 and 25 cm. The samples came from Oahu (n = 2) and Maui Nui (n = 2) and were caught at depths 89 to 142 m. The catches occurred in 2017 (n = 3) and 2019 (n = 1)."}
 fish %>% 
 filter(str_detect(SAMPLE_ID, paste0(small_mode_fish, collapse = "|")))  %>% 
 filter(LENGTH_CM > 20 & LENGTH_CM < 25) %>% 
@@ -188,3 +198,183 @@ scale_y_reverse() +
 theme_classic()
 ```
 
+
+## Camera Lengths by Island and Year  
+
+  *   5 Islands - Big Island, Maui Nui, Oahu, Ni'ihau, Kauai 
+  *   4 Years - 2016, 2017, 2018, 2019
+
+#### Number of Camera Drops per Year
+```{r echo=FALSE}
+
+### number of samples per year
+cam %>% 
+  separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>% 
+  select(-c(BFISH, Seas)) %>% 
+  mutate(Island = factor(Island)) %>% 
+  group_by(Year) %>% 
+  distinct(DROP_CD) %>% 
+  summarise(n = n()) %>% 
+  gt()
+
+
+```
+
+#### Density Plot by Year
+```{r echo=FALSE}
+### density plot by year, overlaid on top of each other to see if some years are more similar than others
+
+cam %>% 
+  separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>% 
+  select(-c(BFISH, Seas)) %>% 
+  mutate(Island = factor(Island)) %>% 
+  group_by(Year) %>% 
+  ggplot(aes(x = LENGTH_CM, group = Year, colour = Year)) +
+  geom_density() +
+  theme_classic()
+
+```
+
+  *   All years have a bimodal (or tri) distribution, but small modes differ.  
+  *   2019 has three modes, with middle one being the smallest.  
+  *   2017 and 2018 are very similar to each other and 2016 is the most distinct from the other years.  
+
+#### Number of Camera Drops per Island
+```{r echo=FALSE}
+### number of samples per island
+cam %>% 
+  separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>% 
+  select(-c(BFISH, Seas)) %>% 
+  mutate(Island = factor(Island)) %>% 
+  group_by(Island) %>% 
+  distinct(DROP_CD) %>% 
+  summarise(n = n()) %>% 
+  arrange(desc(n)) %>% 
+  gt()
+```
+
+
+#### Density Plot by Island
+```{r echo=FALSE}
+### density plot by island, overlaid on top of each other
+
+cam %>% 
+  separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>% 
+  select(-c(BFISH, Seas)) %>% 
+  mutate(Island = factor(Island)) %>% 
+  group_by(Island) %>% 
+  ggplot(aes(x = LENGTH_CM, group = Island, colour = Island)) +
+  geom_density() +
+  theme_classic()
+
+```
+
+  *   Big Island and Oahu have more smaller fish and less bigger fish than the other islands.  
+  *   Niihau only had larger fish.  
+  *   Kauai had an almost even split between smaller and larger fish (with bigger small fish so less of a difference between modes).  
+
+#### Number of Fish per Island/Year
+```{r echo=FALSE, warning=FALSE}
+### number of samples per island/year
+cam %>% 
+  separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>% 
+  select(-c(BFISH, Seas)) %>% 
+  mutate(Island = factor(Island)) %>% 
+  group_by(Year, Island) %>% 
+  ggplot(aes(x = Year, fill = Island)) +
+  geom_histogram(alpha = .4, stat = "count", position = "dodge") +
+  geom_text(stat='count', aes(label=..count..), position = position_dodge(width = .9), size=4) +
+  theme_classic()
+   
+```
+
+
+#### Density Plot by Island and Year  
+```{r echo=FALSE}
+
+cam %>% 
+  separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>% 
+  select(-c(BFISH, Seas)) %>% 
+  mutate(Island = factor(Island)) %>% 
+  group_by(Year) %>% 
+  ggplot(aes(x = LENGTH_CM, colour = Year)) +
+  geom_density() +
+  theme_classic() +
+  facet_wrap(~Island)
+```
+
+  *   In the Big Island, catches were pretty consistent between 2017-2019 but 2016 was very different, probably because n = 3. Also, depth was more in the mid-range of sampled depths. They did not sample in the shallower range, unlike other years.  
+  *   Kauai only had 2 years of data (2016 n = 24, and 2019 n = 15) and the distributions were different, 2016 had mostly smaller fish whereas 2019 had more larger fish.  
+  *   Maui Nui catches all had the same mode for larger sizes (between 40 - 70 cm) but the modes for the smaller sized fish fluctuated each year.  
+  *   Niihau had very small sample sizes (n = 2 - 5) for the 3 years sampling occurred there so distributions are not that reliable but size range is fairly consistent. Also, the distributions are consistent with the 2019 lengths in Kauai (support for combining those regions?).   
+  *   Oahu had consistent length distributions for 2017 and 2018 but 2019 was almost exclusively small fish (< 20 cm, n = 67)
+
+
+#### Density Plot by Year and Island
+```{r echo=FALSE}
+cam %>% 
+  separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>% 
+  select(-c(BFISH, Seas)) %>% 
+  mutate(Island = factor(Island)) %>% 
+  group_by(Year) %>% 
+  ggplot(aes(x = LENGTH_CM, colour = Island)) +
+  geom_density() +
+  theme_classic() +
+  facet_wrap(~Year)
+
+
+```
+
+  *   In 2016, Big Island (n = 3) and Kauai (n = 24) were similar and Niiahu (n = 2) and Maui Nui (n = 10) were similar.  
+  *   In 2017, mostly smaller fish caught off Big Island compared to the other islands. 
+  *   In 2018, there is a bimodal distribution for Maui Nui and less pronouced for the Big Island. Oahu has only larger fish (> 40 cm).  
+  *   In 2019, the first mode is almost exclusively from Oahu samples, the second mode is from Big Island and Maui Nui samples, and the third mode is from all islands.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+
+### combine kauai and niihau 
+# cam %>% 
+#   separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>% 
+#   select(-c(BFISH, Seas)) %>% 
+#   mutate(Island = factor(Island),
+#          Island = str_replace_all(string = Island, pattern = "Niihau", replacement = "Kauai")) %>% 
+#   ggplot(aes(x = LENGTH_CM, colour = Island)) +
+#   geom_density() +
+#   theme_classic() +
+#   facet_wrap(~Year)
+
+
+### There are 9 opaka that are greater than 60cm in 2017 from Maui Nui. Just to compare the numbers with Niihau (n = 3).
+# cam %>%
+#   separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>%
+#   select(-c(BFISH, Seas)) %>%
+#   mutate(Island = factor(Island)) %>%
+#   filter(Island == "Niihau") %>%
+#   group_by(PSU) %>% 
+#   #filter(LENGTH_CM > 60) %>%
+#   summarise(n())
+  
+cam %>% 
+  separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>% 
+  select(-c(BFISH, Seas)) %>% 
+  mutate(Island = factor(Island)) %>% 
+  #filter(Island == "Big Island") %>% 
+  group_by(Island, Year) %>%
+  summarise(min = min(OFFICIAL_DEPTH_M), 
+            Q1 = quantile(OFFICIAL_DEPTH_M, .25),
+            Q2 = quantile(OFFICIAL_DEPTH_M, .5),
+            Q3 = quantile(OFFICIAL_DEPTH_M, .75),
+            max = max(OFFICIAL_DEPTH_M)) %>% 
+  gt(rowname_col = "Year") %>%
+  tab_header(title = "Sampled Depths") %>%
+  fmt_number(columns = vars(min, Q1, Q2, Q3, max), decimals = 2)
+
+
+
+```
+
+Questions:  
+
+  *   2016 sampling? Why so low?    
+  *   2019 What happened in Oahu? Why mostly really small fish?
