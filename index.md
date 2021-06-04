@@ -1,9 +1,3 @@
----
-title: "index"
-author: "Meg Oshima"
-date: "6/4/2021"
-output: html_document
----
 
 ## Summary Documents  
 
