@@ -2,12 +2,17 @@
 title: "BFISH Length Comp Investigations"
 author: "Meg Oshima"
 date: "5/21/2021"
-output: rmarkdown::github_document
-    
-  
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+
+
 ---
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
+#rmarkdown::github_document
+
 library(tidyverse)
 library(r4ss)
 library(magrittr)
