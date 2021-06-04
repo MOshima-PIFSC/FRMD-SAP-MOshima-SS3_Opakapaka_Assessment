@@ -2,3 +2,5 @@
 ## Summary Documents  
 
   1. [BFISH Length Composition Investigations](https://moshima-pifsc.github.io/FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/BFISH_Length_Comp.html)
+  
+  2. [Methods Summary](https://moshima-pifsc.github.io/FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Method_Summaries.html)
