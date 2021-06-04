@@ -6,4 +6,4 @@ Raw_data - contains original, raw, datasets. Do not change these, make copies wh
 Tidy_data - contains data that has been tidied and manipulated  
 ss.exe - SS3 executable file, can download and save into the folder for a run or add to path on computer  
 
-
+Documentation will be made available [here](https://megumioshima.github.io/FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/index.md)
