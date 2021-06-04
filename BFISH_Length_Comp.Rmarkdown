@@ -2,10 +2,8 @@
 title: "BFISH Length Comp Investigations"
 author: "Meg Oshima"
 date: "5/21/2021"
-output: 
-  html_document:
-    toc: true
-    toc_float: true
+output: rmarkdown::github_document
+    
   
 ---
 
