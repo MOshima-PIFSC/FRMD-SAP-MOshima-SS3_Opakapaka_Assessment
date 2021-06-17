@@ -1,5 +1,4 @@
 library(tidyverse)
-library(r4ss)
 library(magrittr)
 
 camera_lengths <- read.csv("./Data/BFISH 2016-2019 Camera Lengths.csv")
@@ -102,3 +101,55 @@ ggplot(aes(x = LENGTH_CM, y = SAMPLE_MEAN_DEPTH_M)) +
 geom_point(aes(colour = SAMPLE_ID, shape = Island), size = 3.5) +
 scale_y_reverse() +
 theme_classic()
+
+cam.merge <- cam %>% 
+  select(PSU, DROP_CD, SPECIES_CD, OFFICIAL_DEPTH_M, LENGTH_CM, Island) %>% 
+  rename(MEAN_DEPTH = "OFFICIAL_DEPTH_M",
+         SAMPLE_ID = "DROP_CD") %>% 
+  mutate(Year = str_sub(SAMPLE_ID, 1, 4),
+         Month = str_sub(SAMPLE_ID, 5,6),
+         Day = str_sub(SAMPLE_ID, 7,8),
+         Gear = "Camera") 
+
+fish.merge <- fish %>% 
+  select(PSU, SAMPLE_ID, SPECIES_CD, SAMPLE_MEAN_DEPTH_M, LENGTH_CM, Island) %>% 
+  rename(MEAN_DEPTH = "SAMPLE_MEAN_DEPTH_M") %>% 
+  mutate(Year = str_sub(SAMPLE_ID, 1, 4),
+    Month = str_sub(SAMPLE_ID, 5, 6),
+    Day = str_sub(SAMPLE_ID, 7, 8),
+    Gear = "Research Fishing") 
+
+lengths.combo <- bind_rows(cam.merge, fish.merge)
+
+lengths.combo %>% 
+  mutate(SAMPLE_ID = factor(SAMPLE_ID)) %>% 
+  distinct(SAMPLE_ID, .keep_all = TRUE) %>% 
+  group_by(Gear, Year) %>% 
+  summarise(N = n()) %>% 
+  pivot_wider(names_from = Gear, values_from = N) %>% 
+  gt() %>% 
+  tab_header(title = "Number of Sampling Events")
+  
+
+lengths.combo %>% 
+  ggplot(aes(x = LENGTH_CM)) +
+  geom_density(aes(colour = Gear)) +
+  facet_wrap(~Year) +
+  theme_classic()
+
+
+lengths.combo %>% 
+  mutate(SAMPLE_ID = factor(SAMPLE_ID)) %>% 
+  distinct(SAMPLE_ID, .keep_all = TRUE) %>% 
+  group_by(Gear, Island) %>% 
+  summarise(N = n()) %>% 
+  pivot_wider(names_from = Gear, values_from = N) %>% 
+  gt() %>% 
+  tab_header(title = "Number of Sampling Events by Island")
+
+lengths.combo %>% 
+  ggplot(aes(LENGTH_CM)) +
+  geom_density(aes(colour = Gear)) + 
+  facet_wrap(~Island) +
+  theme_classic() +
+  labs(main = "Length Distributions by Island")
