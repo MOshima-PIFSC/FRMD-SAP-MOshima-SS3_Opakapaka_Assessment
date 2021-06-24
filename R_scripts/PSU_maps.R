@@ -77,18 +77,35 @@ fish.n <- fish %>%
   mutate(Gear = "Research Fishing")
 
 N.drops <- bind_rows(fish.n, cam.n)
-islands <- cbind(ib.shp, st_coordinates(st_centroid(ib.shp)))
-CRS(islands) <- CRS(HI)
+islands <- data.frame(Island = c("Big Island", "Maui Nui", "Oahu", "Kauai", "Niihau"), 
+                      lat_deg = c(19.6, 20.8, 21.45, 22.1, 21.9), 
+                      lon_deg = c(-155.45, -156.25, -157.96, -159.52, -160.35))
 
 HI %>% 
   filter(STATEFP == 15) %>% 
   ggplot() +
   geom_sf() +
   geom_point(data = N.drops, aes(x = lon_deg, y = lat_deg, colour = Gear, size = n), alpha = .5) +
-  #geom_sf(data = islands, fill = NA) +
-  #geom_label(data = islands, aes(X, Y, label = Island), size = 3) + 
+  geom_text(data = islands, aes(lon_deg, lat_deg, label = Island), size = 4) + 
   scale_color_nmfs(palette = "regional web") +
   theme_classic() +
   labs(y = "Latitude", x = "Longitude")
 
 
+
+small.fish.both <- lengths.combo %>% 
+  filter((LENGTH_CM > 20 & LENGTH_CM < 25 & Gear == "Research Fishing") | (Gear == "Camera" & LENGTH_CM > 10 & LENGTH_CM < 15)) %>% 
+  distinct(PSU, .keep_all = TRUE) %>% 
+  merge(psu, by = "PSU")  
+  
+HI %>% 
+  filter(STATEFP == 15) %>% 
+  ggplot() +
+  geom_sf() +
+  geom_point(data = small.fish.both, 
+             aes(x = lon_deg, y = lat_deg, colour = Gear), alpha = .4, size = 2.6) +
+  geom_text(data = islands, aes(lon_deg, lat_deg, label = Island), size = 4) + 
+  #coord_sf(xlim = c(-154.5, -159))
+  theme_classic() +
+  labs(y = "Latitude", x = "Longitude")
+  

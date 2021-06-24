@@ -153,3 +153,106 @@ lengths.combo %>%
   facet_wrap(~Island) +
   theme_classic() +
   labs(main = "Length Distributions by Island")
+
+
+lengths.combo %>% 
+  ggplot(aes(x = Year, y = LENGTH_CM, color = Gear)) +
+  geom_violin() +
+  theme_classic() +
+  scale_fill_nmfs(palette = "regional web")
+
+lengths.combo %>% 
+  ggplot(aes(LENGTH_CM)) +
+  geom_density(aes(colour = Year)) +
+  facet_wrap(~Gear) +
+  theme_classic()
+
+
+### Deep 6 Investigations 
+
+deep_6 <- unique(camera_lengths$COMMON_NAME)[-c(1,8:9)]
+camera_lengths %>% 
+  filter(COMMON_NAME %in% deep_6) %>% 
+  distinct(SPECIES_CD, .keep_all = TRUE) %>% 
+  select(SPECIES_CD, SCIENTIFIC_NAME, COMMON_NAME)
+
+cam_6 <- camera_lengths %>% 
+  filter(str_detect(BFISH, "_S", negate = TRUE)) %>% 
+  filter(COMMON_NAME %in% deep_6) %>% 
+  separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>% 
+  rename(SAMPLE_ID = "DROP_CD",
+         DEPTH = OFFICIAL_DEPTH_M) %>% 
+  select(PSU, 
+         SAMPLE_ID, 
+         Year, 
+         SPECIES_CD, 
+         COMMON_NAME, 
+         DEPTH, 
+         LENGTH_CM, 
+         Island) %>% 
+  mutate(Gear = "Camera")
+
+
+cam_6 %>% 
+  ggplot(aes(x = LENGTH_CM, color = COMMON_NAME)) +
+  geom_density() +
+  theme_classic()
+
+cam_6 %>% 
+  group_by(COMMON_NAME, Year) %>% 
+  summarise(n = n(), 
+            mean_length = mean(LENGTH_CM),
+            CV = sd(LENGTH_CM)/mean(LENGTH_CM)) %>% 
+  gt(groupname_col = "COMMON_NAME",
+     rowname_col = "Year") %>% 
+  fmt_number(columns = c("mean_length", "CV"), decimals = 2)
+
+cam_6 %>% 
+  group_by(COMMON_NAME) %>% 
+  summarise(n = n(), 
+            mean_length = mean(LENGTH_CM),
+            CV = sd(LENGTH_CM)/mean(LENGTH_CM)) %>% 
+  arrange(by_group = FALSE, desc(n)) %>% 
+  gt() %>% 
+  fmt_number(columns = c("mean_length", "CV"), decimals = 2)
+
+cam_6 %>% 
+  group_by(COMMON_NAME, Year) %>% 
+  summarise(N = n()) %>% 
+  pivot_wider(names_from = COMMON_NAME, values_from = N, values_fill = 0) %>% 
+  gt() %>% 
+  tab_header(title = "Number of Individuals Caught per Year") %>% 
+  grand_summary_rows(columns = c("Ehu", "Gindai", "Hapuupuu", "Kalekale", "Lehi", "Onaga"), fns = list(Total = "sum"))
+
+
+fish_6 <- fishing_lengths %>% 
+  filter(str_detect(BFISH, "_S", negate = TRUE)) %>% 
+  filter(COMMON_NAME %in% deep_6) %>% 
+  separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>% 
+  rename(DEPTH = SAMPLE_MEAN_DEPTH_M) %>% 
+  select(PSU, 
+         SAMPLE_ID,
+         Year, 
+         SPECIES_CD, 
+         COMMON_NAME, 
+         DEPTH, 
+         LENGTH_CM, 
+         Island) %>% 
+  mutate(Gear = "Research Fishing")
+
+head(cam_6)
+head(fish_6)
+
+deep_6_df <- cam_6 %>% 
+  bind_rows(fish_6)
+
+
+deep_6_df %>% 
+  ggplot(aes(x = LENGTH_CM)) +
+  geom_density(aes(colour = Gear)) +
+  geom_text(data = n.df, aes(x = 90, y = .1, label = paste("N = ", N))) +
+  facet_wrap(~COMMON_NAME) +
+  theme_classic()
+
+
+n.df <- data.frame(COMMON_NAME = c("Kalekale", "Ehu", "Lehi", "Onaga", "Hapuupuu", "Gindai"), N = c(278, 50, 42, 14, 9, 6))
