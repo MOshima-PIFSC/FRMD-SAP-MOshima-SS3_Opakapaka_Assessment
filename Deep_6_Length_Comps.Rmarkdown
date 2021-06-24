@@ -1,5 +1,5 @@
 ---
-title: "BFISH_Deep_6_Length_Comps"
+title: "BFISH_Deep_7_Length_Comps"
 author: "Meg Oshima"
 date: "6/21/2021"
 output: 
@@ -28,7 +28,7 @@ knitr::opts_chunk$set(warning=FALSE,
 camera_lengths <- read.csv("./Data/BFISH 2016-2019 Camera Lengths.csv")
 fishing_lengths <- read.csv("./Data/BFISH 2016-2019 Research Fishing Lengths.csv")
 
-deep_6 <- unique(camera_lengths$COMMON_NAME)[-c(1,8:9)]
+deep_6 <- unique(camera_lengths$COMMON_NAME)[-c(8:9)]
 
 deep_6_sps <- camera_lengths %>% 
   filter(COMMON_NAME %in% deep_6) %>% 
