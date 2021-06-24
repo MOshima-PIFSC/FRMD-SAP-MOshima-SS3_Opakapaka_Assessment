@@ -5,6 +5,7 @@ library(r4ss)
 bfish <- read.csv("./Data/Survey_data_paka.csv")
 head(bfish)
 
+
 b_mu <- mean(bfish$Biomass_kg)
 b_se <- mean(bfish$SE_Biomass_kg)
 
@@ -98,11 +99,25 @@ filter(Pearson > 0.8 | Pearson < -0.8) %>%
 group_by(Yr) %>% 
 summarise(n())
 
+rep.$parameters %>% 
+filter(str_detect(row.names(.), "Size_"))
 
-
-png("./Run2/Indices/plots/bfish_index.png", height = 1500, width = 1950, units = "px")
-plot(as.numeric(bfish$YEAR), bfish$Biomass_kg, pch = 1, ylim = c(1000000, 6000000), ylab = "Index", xlab = "Year", xaxt = "n")
-axis(side = 1, at = as.numeric(bfish$YEAR), labels = TRUE)
-arrows(x0 = as.numeric(bfish$YEAR), y0 = bfish$Biomass_kg - bfish$SE_Biomass_kg, x1 = bfish$YEAR, y1 = bfish$Biomass_kg + 
-bfish$SE_Biomass_kg, length = 0.02, code = 3, angle = 90)
+png("./Run2/Indices/plots/bfish_index.png", height = 6, width = 8, units = "in", res = 300)
+plot(as.numeric(bfish$YEAR), 
+    bfish$Biomass_kg, 
+    pch = 1, 
+    ylim = c(1000000, 6000000), 
+    ylab = "Index", 
+    xlab = "Year", 
+    xaxt = "n")
+axis(side = 1, 
+    at = as.numeric(bfish$YEAR), 
+    labels = TRUE)
+arrows(x0 = as.numeric(bfish$YEAR), 
+    y0 = bfish$Biomass_kg - bfish$SE_Biomass_kg, 
+    x1 = bfish$YEAR, 
+    y1 = bfish$Biomass_kg + bfish$SE_Biomass_kg, 
+    length = 0.02, 
+    code = 3, 
+    angle = 90)
 dev.off()
