@@ -149,7 +149,7 @@
 #
 #_initial_F_parms; count = 1
 #_ LO HI INIT PRIOR PR_SD  PR_type  PHASE
- 0.001 5 0.120812 0.1 99 0 1 # InitF_seas_1_flt_1Catch_Com_DSH  #TODO
+ 0.001 5 0.120812 0.1 99 0 2 # InitF_seas_1_flt_1Catch_Com_DSH  #TODO
 #2019 2069
 # F rates by fleet
 #STOPPED TRANSFERRING SOME  HUGE COMMENTED OUT BLOCKS HERE
@@ -196,7 +196,7 @@
  1 0 0 0 # 1 Catch_Com_DSH
  5 0 0 1 # 2 CPUE_DSH_old
  5 0 0 1 # 3 CPUE_DSH_recent
- 5 0 0 1 # 4 BFISH
+ 1 0 0 1 # 4 BFISH
 
 
 ##
@@ -226,7 +226,7 @@
 #_          LO            HI          INIT         PRIOR         PR_SD       PR_type      PHASE    env-var    use_dev   dev_mnyr   dev_mxyr     dev_PH      Block    Blk_Fxn  #  parm_name
 # 1   Catch_Com_DSH LenSelex
              5           90             35            40           99             0          2          0          0          0          0          0          0          0  #  Size_inflection_Catch_Com_DSH(1)
-             5           120       20.8581          16.5            99             0          3          0          0          0          0          0          0          0  #  Size_95%width_Catch_Com_DSH(1)
+             -1           120       20.8581          16.5            99             0          3          0          0          0          0          0          0          0  #  Size_95%width_Catch_Com_DSH(1)
 # 2  CPUE_DSH_old LenSelex
             -1            -1            -1            -1            99             0         -4          0          0          0          0          0          0          0  #  SizeSel_P1_CPUE_DSH_old(6)
            -1            -1            -1            -1            99             0         -4          0          0          0          0          0          0          0  #  SizeSel_P2_CPUE_DSH_old(6)
@@ -234,8 +234,8 @@
             -1            -1            -1            -1            99             0         -4          0          0          0          0          0          0          0  #  SizeSel_P1_CPUE_DSH_recent(7)
             -1            -1            -1            -1            99             0         -4          0          0          0          0          0          0          0  #  SizeSel_P2_CPUE_DSH_recent(7)
 # 4   BFISH LenSelex
-            -1            -1            -1            -1            99             0         -4          0          0          0          0          0          0          0  #  SizeSel_P1_BFISH
-            -1            -1            -1            -1            99             0         -4          0          0          0          0          0          0          0  #  SizeSel_P2_BFISH
+            1           90             7            40           99             0          2          0          0          0          0          0          0          0  #  Size_inflection_BFISH
+            -1           120       20.8581          16.5          99             0          3          0          0          0          0          0          0          0  #  Size_95%width_BFISH
 # 1   Catch_Com_DSH AgeSelex
 # 2  CPUE_DSH_old AgeSelex
 # 3   CPUE_DSH_recent AgeSelex
@@ -276,6 +276,7 @@
  1 3 1 1 1
  1 4 1 1 1
  6 1 1 1 1
+ #6 4 1 1 1
  9 1 1 0 1
 -9999  1  1  1  1  #  terminator
 #

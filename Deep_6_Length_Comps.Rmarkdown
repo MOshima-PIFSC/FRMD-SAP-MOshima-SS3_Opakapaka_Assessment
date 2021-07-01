@@ -247,18 +247,18 @@ deep_6_df %>%
 
 <br>  
 
-##### Sampled Depths
+
 ```{r}
-
-
-deep_6_df %>% 
-  group_by(Gear, COMMON_NAME) %>%
-  ggplot(aes(x = COMMON_NAME, y = DEPTH, fill = Gear)) +
-  geom_boxplot(alpha = .4) +
-  #facet_wrap(~COMMON_NAME, scales = "free") +
-  scale_y_reverse() +
-  theme_classic() +
-  labs(y = "Depth (m)")
+##### Sampled Depths
+# 
+# deep_6_df %>% 
+#   group_by(Gear, COMMON_NAME) %>%
+#   ggplot(aes(x = COMMON_NAME, y = DEPTH, fill = Gear)) +
+#   geom_boxplot(alpha = .4) +
+#   #facet_wrap(~COMMON_NAME, scales = "free") +
+#   scale_y_reverse() +
+#   theme_classic() +
+#   labs(y = "Depth (m)")
 
 ```
 

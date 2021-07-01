@@ -256,3 +256,36 @@ deep_6_df %>%
 
 
 n.df <- data.frame(COMMON_NAME = c("Kalekale", "Ehu", "Lehi", "Onaga", "Hapuupuu", "Gindai"), N = c(278, 50, 42, 14, 9, 6))
+
+
+same_psu <- unique(camera_lengths[which(camera_lengths$PSU %in% fishing_lengths$PSU),2])
+
+
+cam_depths <- camera_lengths %>% 
+  filter(PSU %in% same_psu) %>% 
+  select(PSU, OFFICIAL_DEPTH_M)
+
+fish_depths <- fishing_lengths %>% 
+  filter(PSU %in% same_psu) %>% 
+  select(PSU, SAMPLE_MEAN_DEPTH_M)
+
+left_join(cam_depths, fish_depths, by = "PSU") %>% 
+  distinct() %>% 
+  mutate(PSU = as.factor(PSU)) %>% 
+  ggplot(aes(x = PSU, y = OFFICIAL_DEPTH_M)) +
+  geom_point(color = "red") +
+  geom_point(aes(x = PSU, y = SAMPLE_MEAN_DEPTH_M)) +
+  theme_classic() +
+  ggsave(filename = "./FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/PSU_depths.png")
+
+camera_lengths %>% group_by(BFISH) %>% distinct(DROP_CD) %>% summarise(n())
+
+cam %>% 
+  filter(str_detect(BFISH, "_F")) %>% 
+  separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>% 
+  filter(Year == 2016) %>% 
+  group_by(DROP_CD) %>% 
+  ggplot(aes(x = LENGTH_CM, fill = DROP_CD)) +
+  #geom_density() 
+  geom_histogram(binwidth = 1) 
+  facet_wrap(~Year)

@@ -200,22 +200,26 @@
 1 # minimum size in the population (lower edge of first bin and size at age 0.00)
 113 # maximum size in the population (lower edge of last bin)
 0 #_use_lencomp
+#_len_info 
+
+
 0 #_N_agebins
 #
 #_MeanSize_at_Age_obs
 0 #_use_MeanSize_at_Age_obs
 0 #_N_environ_variables
-1 #_N_sizefreq_methods
-30 #_nbins_per_method
-2 #_units_per_method
-1 #_scale_per_method
-1e-09 #_mincomp_per_method
-69 #_Nobs_per_method
+2 #_N_sizefreq_methods
+30 16 #_nbins_per_method
+1 2 #_Units per each method (1 = biomass, 2 = numbers)
+1 3 #_Scale per each method (1 = kg, 2 = lbs, 3 = cm, 4 = inches)
+1e-09 1e-09 #_mincomp_per_method
+69 4 #_Nobs_per_method
 #
 #_Sizefreq bins
 #
 #_sizefreq_bins_list
 0.23 0.68 1.13 1.59 2.04 2.49 2.95 3.4 3.86 4.31 4.76 5.22 5.67 6.12 6.58 7.03 7.48 7.94 8.39 8.85 9.3 9.75 10.21 10.66 11.11 11.57 12.02 12.47 12.93 13.38
+1   5   10   15   20  25  30  35  40  45  50  55  60  65  70  75  
 #_Method	Yr	Seas	FltSvy	Gender	Part	Nsamp	a0.23	a0.68	a1.13	a1.59	a2.04	a2.49	a2.95	a3.4	a3.86	a4.31	a4.76	a5.22	a5.67	a6.12	a6.58	a7.03	a7.48	a7.94	a8.39	a8.85	a9.3	a9.75	a10.21	a10.66	a11.11	a11.57	a12.02	a12.47	a12.93	a13.38
 1	1950	7	1	0	2	 22.48	 1	  7	10	18	13	12	 7	 7	 3	 6	 0	 1	 1	 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	#_1 
 1	1951	7	1	0	2	 16.99	 2	  2	 7	 7	 7	 6	 7	 5	 1	 2	 1	 0	 0	 0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	#_2 
@@ -286,6 +290,11 @@
 1	2016	7	1	0	2	 43.87	 7	 22	14	20	 9	13	 8	19	 8	13	 4	 3	 0	 1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	#_67
 1	2017	7	1	0	2	 64.71	 2	 28	33	22	18	22	16	18	10	14	 3	 2	 1	 1	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	#_68
 1	2018	7	1	0	2	 50.61	 1	 21	19	21	14	11	 9	19	 8	 9	 0	 2	 1	 1	1	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	#_69
+2 2017	7	4	0	2	39	0	0	0	0	0	8	4	8	4	2	4	4	4	1	0	0
+2 2018	7	4	0	2	138	0	1	13	10	13	2	6	11	15	13	16	19	13	5	1	0
+2 2019	7	4	0	2	96	0	0	1	18	9	3	6	3	6	9	12	13	10	5	1	0
+2 2020	7	4	0	2	262	0	19	46	6	6	23	30	7	12	14	36	24	25	9	4	1
+
 0 #_do_tags
 0 #_morphcomp_data
 0 #_use_selectivity_priors
