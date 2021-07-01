@@ -206,7 +206,7 @@
 -1             .001      0               0               0           0           1 #CPUE_DSH_old
 -1             .001      0               0               0           0           1 #CPUE_DSH_recent
 -1             .001      0               0               0           0           1 #BFISH 
-16#_N_len_bins 
+16 #_N_len_bins 
 #_lbin_vector
 1   5   10   15   20  25  30  35  40  45  50  55  60  65  70  75  
 
