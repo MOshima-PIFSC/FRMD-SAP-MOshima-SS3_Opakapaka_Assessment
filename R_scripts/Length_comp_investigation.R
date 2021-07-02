@@ -289,3 +289,6 @@ cam %>%
   #geom_density() 
   geom_histogram(binwidth = 1) 
   facet_wrap(~Year)
+
+  head(cam)
+  
