@@ -2,9 +2,10 @@
 title: "BFISH_Deep_7_Length_Comps"
 author: "Meg Oshima"
 date: "6/21/2021"
-output: 
+output:  
   html_document:
     toc: TRUE
+ 
 ---
 
 ```{r setup, include=FALSE}
