@@ -35,20 +35,23 @@ deep7 <- unique(camera_lengths$COMMON_NAME)[-c(8:9)]
 
 cam_sum <- camera_lengths %>% 
   filter(COMMON_NAME %in% deep7) %>% 
-  select(COMMON_NAME, OFFICIAL_DEPTH_M, LENGTH_CM) %>% 
-  group_by(COMMON_NAME) %>% 
+  select(COMMON_NAME, OFFICIAL_DEPTH_M, LENGTH_CM, BFISH) %>% 
+  mutate(Year = as.integer(str_extract_all(BFISH, "[0-9]+", simplify = TRUE))) %>% 
+  group_by(COMMON_NAME, Year) %>% #for first figure remove Year from group_by
   summarise(N = n()) %>% 
   mutate(Data_Source = "BFISH_camera_length")
 
 rfish_sum <- fishing_lengths %>% 
   filter(COMMON_NAME %in% deep7) %>% 
-  select(COMMON_NAME, LENGTH_CM) %>% 
-  group_by(COMMON_NAME) %>% 
+  select(COMMON_NAME, LENGTH_CM, BFISH) %>% 
+  mutate(Year = as.integer(str_extract_all(BFISH, "[0-9]+", simplify = TRUE))) %>% 
+  group_by(COMMON_NAME, Year) %>% 
   summarise(N = n()) %>% 
   mutate(Data_Source = "BFISH_fishing_length")
 
 frs_sum <- deep7_frs %>% 
-  group_by(COMMON_NAME) %>% 
+  group_by(COMMON_NAME, FYEAR) %>% 
+  rename(Year = FYEAR) %>% 
   summarise(N = n()) %>% 
   mutate(Data_Source = "FRS_lbs_caught",
          N = N/1000) 
@@ -81,4 +84,22 @@ ggplot(data = data.df, aes(x = Data_Source, y = COMMON_NAME, alpha = N)) +
        caption = "Amount of data available per species (Nrows). Note FRS_lbs_caught is x1000.") +
   theme_classic()  +
   ggsave(filename = "./FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Data/Data_sources_N.png")
+
+  
+ggplot(data = data.df, aes(x = Year, y = COMMON_NAME, alpha = N, color = Data_Source)) +
+  geom_point(aes(size = N*2.5), show.legend = FALSE) +
+  scale_alpha_continuous(range = c(0.3, 0.7)) + 
+  scale_size_area(max_size = 10) +
+  scale_color_nmfs("regional web") +
+  theme_bw() +
+  facet_wrap(~Data_Source, strip.position = "top", scales = "free_x") +
+  theme(panel.spacing = unit(.5, "lines"), 
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        axis.line = element_blank(),            # disable axis lines
+        axis.title = element_blank(),           # disable axis titles
+        panel.border = element_blank(),         # disable panel border
+        panel.grid.major.x = element_blank(),   # disable lines in grid on X-axis
+        panel.grid.minor.x = element_blank()) +
+  ggsave(filename = "./FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Data/Data_Sources_N_Year.png", width = 30, height = 15, units = "cm")
 
