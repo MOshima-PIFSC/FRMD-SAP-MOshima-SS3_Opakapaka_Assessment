@@ -3,11 +3,13 @@ library(magrittr)
 
 camera_lengths <- read.csv("./Data/BFISH 2016-2019 Camera Lengths.csv")
 fishing_lengths <- read.csv("./Data/BFISH 2016-2019 Research Fishing Lengths.csv")
-
+PSU <- read.csv("./FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Data/BFISH PSU lookup table.cvs")
 head(camera_lengths)
 head(fishing_lengths)
+head(PSU)
 
 sp_code <- "PRFI"
+
 
 ### What is causing the mode in the smaller sizes of the BFISH camera data?
 cam <- camera_lengths %>% 
@@ -17,6 +19,34 @@ select(-X)
 head(cam)
 
 summary(cam)
+
+
+### Match up PSU with cam and fishing data
+
+PSU %<>% 
+  select(-c(Island, 
+            Lat_DD_MM, 
+            Long_DD_MM, 
+            Lat_DD_MM_SS, 
+            Long_DD_MM_SS, 
+            STRATA_2020, 
+            Depth_MEAN_m, 
+            Depth_MIN_m, 
+            Depth_MAX_m, 
+            Depth_STD_m, 
+            med_slp, 
+            med_acr, 
+            Depth_px_n, 
+            Slp_px_n, 
+            BS_px_nj, 
+            BS_px_over_136j,
+            BS_pct_over_136j, 
+            pctHB, 
+            pctHS))
+
+
+cam <- merge(cam, PSU, by = "PSU")
+head(cam)
 
 cam %>% 
 ggplot(aes(x = LENGTH_CM)) +
@@ -292,3 +322,10 @@ cam %>%
 
   head(cam)
   
+  
+cam %>% 
+  separate(BFISH, into = c("BFISH", "Year", "Seas"), sep = "_") %>%
+  filter(STRATA == "HB_L_S" & Year == 2017) %>% 
+  group_by(STRATA) %>% 
+  summarise(sd(LENGTH_CM))
+

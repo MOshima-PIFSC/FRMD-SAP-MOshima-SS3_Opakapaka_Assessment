@@ -1,0 +1,79 @@
+---
+title: "Opaka_FRS_Weight_Comps"
+author: "Meg Oshima"
+date: "7/7/2021"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(gt)
+
+deep7_frs <- read.csv("../Data/Deep_7_FRS.csv")
+
+opaka_frs <- deep7_frs %>% 
+  filter(str_detect(COMMON_NAME, "Opakapaka") & LBS < 19) %>% 
+  mutate(Decade = floor(FYEAR / 10) * 10,
+         Decade = factor(Decade, levels = seq(1940, 2010, by = 10)))
+
+opaka_frs %>% 
+  ggplot(aes(x = LBS)) +
+  geom_density() +
+  theme_classic() +
+  labs(title = "Weight frequecy for Opakapaka from 1948 - 2019.",
+       caption = "Records were restricted to catches with one reported fish and weight < 19 lbs.")
+
+
+opaka_frs %>% 
+  ggplot(aes(x = LBS)) +
+  geom_histogram(aes(y = ..density..), binwidth = 1, fill = "white", colour = "black") +
+  geom_density() +
+  theme_classic() +
+  labs(title = "Weight frequecy for Opakapaka from 1948 - 2019.",
+       caption = "Records were restricted to catches with one reported fish and weight < 19 lbs.")
+
+
+
+opaka_frs %>% 
+  group_by(Decade) %>% 
+  summarise(N = n(), 
+            Min = min(LBS),
+            Max = max(LBS)) %>% 
+  gt() %>% 
+  tab_header(title = "Number of Single Opaka Catch Records by Decade") 
+
+
+```
+
+<br>  
+
+```{r}
+opaka_frs %>% 
+  ggplot(aes(x = Decade, y = LBS)) +
+  geom_boxplot() +
+  theme_classic() +
+  labs(title = "Weight records by decade.")
+
+opaka_frs %>%  
+  ggplot(aes(x = LBS, group = Decade, color = Decade)) +
+  geom_density() +
+  theme_classic() +
+  labs(title = "Weight frequency distributions by decade.")
+
+opaka_frs %>%  
+  ggplot(aes(x = LBS)) +
+  geom_density() +
+  theme_classic() +
+  facet_wrap(~Decade)
+  labs(title = "Weight frequency distributions by decade.")
+
+
+```
+
+From the 80's on, the weight frequencies are very similar (later years have slightly more peaked distribution). In the earlier years it seems like weight distributions were flatter and more heavier fish were caught. 

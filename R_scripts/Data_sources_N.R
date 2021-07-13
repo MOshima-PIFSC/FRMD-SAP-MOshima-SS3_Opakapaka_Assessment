@@ -37,7 +37,7 @@ cam_sum <- camera_lengths %>%
   filter(COMMON_NAME %in% deep7) %>% 
   select(COMMON_NAME, OFFICIAL_DEPTH_M, LENGTH_CM, BFISH) %>% 
   mutate(Year = as.integer(str_extract_all(BFISH, "[0-9]+", simplify = TRUE))) %>% 
-  group_by(COMMON_NAME, Year) %>% #for first figure remove Year from group_by
+  group_by(COMMON_NAME) %>% #for first figure remove Year from group_by
   summarise(N = n()) %>% 
   mutate(Data_Source = "BFISH_camera_length")
 
@@ -45,16 +45,16 @@ rfish_sum <- fishing_lengths %>%
   filter(COMMON_NAME %in% deep7) %>% 
   select(COMMON_NAME, LENGTH_CM, BFISH) %>% 
   mutate(Year = as.integer(str_extract_all(BFISH, "[0-9]+", simplify = TRUE))) %>% 
-  group_by(COMMON_NAME, Year) %>% 
+  group_by(COMMON_NAME) %>% 
   summarise(N = n()) %>% 
   mutate(Data_Source = "BFISH_fishing_length")
 
 frs_sum <- deep7_frs %>% 
-  group_by(COMMON_NAME, FYEAR) %>% 
+  group_by(COMMON_NAME) %>% 
   rename(Year = FYEAR) %>% 
   summarise(N = n()) %>% 
   mutate(Data_Source = "FRS_lbs_caught",
-         N = N/1000) 
+         N = N/10) 
 
 
 data.df <- bind_rows(cam_sum, rfish_sum, frs_sum) %>% 
@@ -81,7 +81,7 @@ ggplot(data = data.df, aes(x = Data_Source, y = COMMON_NAME, alpha = N)) +
   scale_size_area(max_size = 20) +
   labs(x = "Data Source", 
        y = "Common Name",
-       caption = "Amount of data available per species (Nrows). Note FRS_lbs_caught is x1000.") +
+       caption = "Amount of data available per species (Nrows). Note FRS_lbs_caught is x10.") +
   theme_classic()  +
   ggsave(filename = "./FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Data/Data_sources_N.png")
 
