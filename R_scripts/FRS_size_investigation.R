@@ -42,6 +42,8 @@ deep7_frs <- frs %>%
 
 deep7 <- unique(camera_lengths$COMMON_NAME)[-c(8:9)]
 
+deep7_frs$Region <- cut(as.numeric(deep7_frs$AREA), breaks = c(99,300,400,500,20000), labels = c("BIG ISLAND","MAUI NUI","OAHU",'KAUAI-NIIHAU'))
+
 write.csv(deep7_frs, file = "./FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Data/Deep_7_FRS.csv")
 ## Is it really reasonable to catch an opaka bigger than 20lbs? Looking at Sundberg and Underkoffler (weight and length sampling at the UFA fishing auction) and googling the max size, they all seem to be < 20lbs. Also state record is 18.5 lbs. John chose to cut off at 19lbs. 
 opaka_frs <- deep7_frs %>% 
@@ -102,46 +104,46 @@ opaka_frs %>%
   #geom_text(aes(label = AREA_ID)) +
   theme_classic()
 
-  
-  
-  
-  
-  ggplot() +
-  geom_sf() + 
-  theme_classic()
-
-
-opaka_frs %<>% 
-  rename("AREA_ID" = "AREA") %>% 
-  left_join(HDAR_areas, by = "AREA_ID") %>% 
-  st_sf() 
-
-
 
 opaka_frs <- deep7_frs %>% 
   filter(str_detect(COMMON_NAME, "Opakapaka") & LBS < 19) %>% 
   mutate(Decade = floor(FYEAR / 10) * 10,
-         Decade = factor(Decade, levels = seq(1940, 2010, by = 10)))
+         Decade = factor(Decade, levels = seq(1940, 2010, by = 10)),
+         AREA = as.numeric(AREA))
 
-opaka_frs %>% 
+opaka_lbs_sum <- opaka_frs %>% 
   group_by(Decade, AREA) %>% 
   summarise(tot_lbs = sum(LBS)) %>% 
   rename(AREA_ID = AREA) %>% 
-  right_join(HDAR_areas, by = "AREA_ID") %>% 
-  filter(Decade == 2010) %>% 
+  right_join(mhi_cropped, by = "AREA_ID") %>% 
+  mutate(Lbs_caught = case_when(
+    tot_lbs >= 1& tot_lbs <= 50 ~ "0-50 lbs",
+    tot_lbs >= 51 & tot_lbs <= 100 ~ "51-100 lbs",
+    tot_lbs >= 101 & tot_lbs <= 500 ~ "101-500 lbs",
+    tot_lbs >= 501 & tot_lbs <= 5000 ~ "501-5000 lbs"
+  ),
+  Lbs_caught = factor(Lbs_caught, levels = c("0-50 lbs", 
+                                             "51-100 lbs", 
+                                             "101-500 lbs", 
+                                             "501-5000 lbs"))) %>% 
+  filter(!is.na(Lbs_caught)) %>% 
   ungroup() %>% 
-  st_sf() %>% 
-  ggplot() +
-  geom_sf() +
-  coord_sf(
-      xlim = c(-162, -153),
-      ylim = c(17, 24)
-    )
-  #coord_sf(xlim = c(-88, -78), ylim = c(24.5, 33), expand = FALSE) +
-  #geom_sf_text(aes(label = AREA_ID)) +
-  theme_classic()
+  st_sf()
 
-  opaka_frs %>% 
+mhi_cropped %>%   
+  ggplot() +
+  geom_sf(fill = "white") +
+  geom_sf(data = opaka_lbs_sum, aes(fill = Lbs_caught), alpha = .5) +
+  coord_sf(
+    xlim = c(-162, -154),
+    ylim = c(18, 23.5)
+  ) +
+  facet_wrap(~Decade) +
+  theme_classic() +
+  scale_fill_nmfs("regional web")
+
+
+opaka_frs %>% 
     merge(mhi_cropped, by.x = "AREA", by.y = "AREA_ID", all = TRUE) %>% 
     filter(!is.na(LBS)) %>%
     group_by(TYPE) %>%
@@ -163,3 +165,26 @@ opaka_frs %>%
   geom_density(data = cam, aes(x = LENGTH_CM), color = "purple") +
   theme_classic()
   
+
+
+deep7_frs %>% 
+  filter(CAUGHT == 1) %>% 
+  group_by(COMMON_NAME) %>% 
+  summarise(Min = min(LBS),
+            q1 = quantile(LBS, probs = .25), 
+            med = median(LBS), 
+            q3 = quantile(LBS, probs = .75), 
+            Max = max(LBS))
+
+
+onaga = 35
+ehu = 12
+gindai = 5
+Hapuupuu = 563
+kalekale = 4
+lehi = 33
+opakapaka = 19
+
+deep7_frs <- deep7_frs %>% 
+  filter(CAUGHT == 1) %>% 
+  filter(COMMON_NAME == "Ehu" & LBS < 12 | COMMON_NAME == "Gindai" & LBS < 5 | COMMON_NAME == "Hapuupuu" & LBS < 563 | COMMON_NAME == "Kalekale" & LBS < 4 | COMMON_NAME == "Lehi" & LBS < 33 | COMMON_NAME == "Onaga" & LBS < 35 | COMMON_NAME == "Opakapaka" & LBS < 19)

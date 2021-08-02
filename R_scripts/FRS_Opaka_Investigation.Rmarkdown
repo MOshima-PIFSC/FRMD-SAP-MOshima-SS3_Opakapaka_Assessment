@@ -225,6 +225,7 @@ opaka_frs %>%
 
 ```
 
+
 ### Weight Compositions by Area Type  
 
 ```{r}
@@ -247,7 +248,31 @@ opaka_frs %>%
   geom_text(data = N.type, aes(x = 15, y = , label = N), position = position_nudge(y = +.5)) +
   theme_classic() +
   scale_fill_nmfs("regional web")
+
 ```
+
+
+### Weight Composition by Island  
+
+```{r}
+
+N.island <- opaka_frs %>% 
+  merge(mhi_cropped, by.x = "AREA", by.y = "AREA_ID", all = TRUE) %>% 
+  filter(!is.na(LBS)) %>%
+  group_by(Region) %>% 
+  summarise(N = paste0("N = ", n()))
+
+opaka_frs %>% 
+  filter(!is.na(LBS)) %>%
+  ggplot(aes(x = LBS, y = Region, fill = Region)) +
+  geom_density_ridges(alpha = .5, show.legend = FALSE) +
+  geom_text(data = N.island, aes(x = 18, y = , label = N), position = position_nudge(y = +.5)) +
+  theme_classic() +
+  scale_fill_nmfs("regional web")
+
+
+```
+
 
 
 ### Converting Weights to Length Comps  
@@ -266,11 +291,19 @@ we converted weights to lengths and look at the distribution. Compared to the di
 # convert from weight to length by L = (W/alpha)^(1/beta)
 
 camera_lengths <- read.csv("../Data/BFISH 2016-2019 Camera Lengths.csv")
+fishing_lengths <- read.csv("../Data/BFISH 2016-2019 Research Fishing Lengths.csv")
 sp_code <- "PRFI"
+
 cam <- camera_lengths %>% 
 filter(str_detect(SPECIES_CD, sp_code)) %>% 
 filter(str_detect(BFISH, "_S", negate = TRUE)) %>% 
 select(-X)
+
+fish <- fishing_lengths %>% 
+  filter(str_detect(SPECIES_CD, sp_code)) %>% 
+  filter(str_detect(BFISH, "_S", negate = TRUE)) %>% 
+  select(-X) %>% 
+  filter(SAMPLE_MEAN_DEPTH_M >= 75 & SAMPLE_MEAN_DEPTH_M <= 250)
 
 alpha <- 2.311E-05
 beta <- 2.928
@@ -282,8 +315,9 @@ opaka_frs %>%
   ggplot(aes(x = Length)) +
   geom_density(colour = "#C95E15") +
   geom_density(data = cam, aes(x = LENGTH_CM), color = "#00467F") +
+  geom_density(data = fish, aes(x = LENGTH_CM), color = "#157253") +
   theme_classic() +
-  labs(caption = "Blue line represents the BFISH camera survey data and orange line represents the converted lengths from FRS weights data.")
+  labs(caption = "Blue line represents the BFISH camera survey data, green line represents the BFISH research fishing data, \n and orange line represents the converted lengths from FRS weights data.")
   
 ```
 
