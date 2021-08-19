@@ -10,7 +10,3 @@
 
   4. [Deep 7 FRS Weight Frequency Investigation](https://moshima-pifsc.github.io/FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/R_scripts/Deep7_FRS_Investigation.html)
   
-  
-  ![Available data](https://moshima-pifsc.github.io/FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Data/Data_sources_N.png)
-  
-  ![Available data by year](https://moshima-pifsc.github.io/FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Data/Data_Sources_N_Year.png)
