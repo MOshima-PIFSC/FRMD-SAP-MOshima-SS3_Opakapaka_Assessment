@@ -39,7 +39,7 @@ cam_sum <- camera_lengths %>%
   filter(COMMON_NAME %in% deep7) %>% 
   select(COMMON_NAME, OFFICIAL_DEPTH_M, LENGTH_CM, BFISH) %>% 
   mutate(Year = as.integer(str_extract_all(BFISH, "[0-9]+", simplify = TRUE))) %>% 
-  group_by(COMMON_NAME, Year) %>% #for first figure remove Year from group_by
+  group_by(COMMON_NAME) %>% #for first figure remove Year from group_by
   summarise(N = n()) %>% 
   mutate(Data_Source = "BFISH_camera_length")
 
@@ -47,12 +47,12 @@ rfish_sum <- fishing_lengths %>%
   filter(COMMON_NAME %in% deep7) %>% 
   select(COMMON_NAME, LENGTH_CM, BFISH) %>% 
   mutate(Year = as.integer(str_extract_all(BFISH, "[0-9]+", simplify = TRUE))) %>% 
-  group_by(COMMON_NAME, Year) %>% 
+  group_by(COMMON_NAME) %>% 
   summarise(N = n()) %>% 
   mutate(Data_Source = "BFISH_fishing_length")
 
 frs_sum <- deep7_frs %>% 
-  group_by(COMMON_NAME, FYEAR) %>% 
+  group_by(COMMON_NAME) %>% 
   rename(Year = FYEAR) %>% 
   summarise(N = n()) %>% 
   mutate(Data_Source = "FRS_lbs_caught",
@@ -60,7 +60,7 @@ frs_sum <- deep7_frs %>%
 
 drs_sum <- deep7_drs %>% 
   rename("COMMON_NAME" = "common_name") %>% 
-  group_by(COMMON_NAME, Year) %>% 
+  group_by(COMMON_NAME) %>% 
   summarise(N = n()) %>% 
   mutate(Data_Source = "DRS_lbs_caught",
          N = N/10)
@@ -84,10 +84,10 @@ lh_sum <- lh %>%
          "Length-Weight" = "N.2") %>% 
   pivot_longer(cols = -c(COMMON_NAME, Year), names_to = "Data_Source", values_to = "N") %>% 
   filter(!is.na(N)) %>% 
-  group_by(COMMON_NAME, Year, Data_Source) %>% 
+  group_by(COMMON_NAME, Data_Source) %>% 
   summarise(N = n()) %>% 
   mutate(N = N*5) %>% 
-  select(COMMON_NAME, Year, N, Data_Source)
+  select(COMMON_NAME, N, Data_Source)
   
 
 data.df <- bind_rows(cam_sum, rfish_sum, frs_sum, drs_sum, lh_sum) %>% 
