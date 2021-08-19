@@ -1,0 +1,80 @@
+---
+title: "Deep 7 DRS Investigation"
+author: "Meg Oshima"
+date: "8/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(gt)
+library(nmfspalette)
+library(sf)
+library(ggridges)
+
+knitr::opts_chunk$set(warning=FALSE,
+                message=FALSE,
+                echo=FALSE)  
+
+scale_colour_continuous <- function(...) scale_fill_nmfs(palette = "regional web")
+scale_colour_discrete   <- function(...) scale_color_nmfs(palette = "regional web")
+scale_fill_continuous <- function(...) scale_fill_nmfs(palette = "regional web")
+scale_fill_binned <- function(...) scale_color_nmfs(palette = "regional web")
+
+
+```
+
+```{r}
+deep7_drs <- read.csv("../Data/Data for Meg/DRS_deep7.csv")
+deep7_frs <- read.csv("../Data/Deep_7_FRS.csv")
+```
+
+### Full Weight Data Set  
+Data are DRS records for single catch fish with weights up to the state record weights for each species. Data were collected from 2000 to 2021.  
+
+```{r}
+
+
+com_names <- c("Hapuupuu","Kalekale","Opakapaka","Ehu","Onaga", "Lehi","Gindai")
+st_records <- data.frame(COMMON_NAME = com_names,  RECORD = c(563,4,19,12,35,33,5))
+
+st_records %>% 
+  arrange(desc(RECORD)) %>% 
+  gt() %>% 
+  cols_label(
+    COMMON_NAME = "Common Name",
+    RECORD = "State Record (lbs)"
+  ) %>% 
+  tab_header(title = "State Records for Deep 7 Species")
+
+```
+
+<br>
+
+### Weight Distributions for Each Species  
+
+
+```{r}
+deep7_frs <- deep7_frs %>% 
+  filter(CAUGHT == 1) %>% 
+  filter(COMMON_NAME == "Ehu" & LBS < 12 
+         | COMMON_NAME == "Gindai" & LBS < 5 
+         | COMMON_NAME == "Hapuupuu" & LBS < 563 
+         | COMMON_NAME == "Kalekale" & LBS < 4 
+         | COMMON_NAME == "Lehi" & LBS < 33 
+         | COMMON_NAME == "Onaga" & LBS < 35 
+         | COMMON_NAME == "Opakapaka" & LBS < 19) %>% 
+  rename("common_name" = "COMMON_NAME")
+
+
+deep7_drs %>% 
+  group_by(common_name) %>% 
+  ggplot(aes(x = pounds_bought)) +
+  geom_density(colour = "#D02C2F", size = .75) + 
+  geom_density(aes(x = LBS), data = deep7_frs, color = "#007078", size = .75) +
+  facet_wrap(~common_name, scales = "free") +
+  theme_classic() +
+  labs(title = "DRS vs FRS Weight Distributions", caption = "Red line represents DRS data and teal line represents FRS data.")
+  
+
+```
