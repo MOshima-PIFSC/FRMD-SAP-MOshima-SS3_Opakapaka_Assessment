@@ -33,12 +33,12 @@ scale_fill_binned <- function(...) scale_color_nmfs(palette = "regional web")
 ### Camera Survey
 ```{r}
 
-camera_lengths <- read.csv("./Data/BFISH 2016-2019 Camera Lengths.csv")
-fishing_lengths <- read.csv("./Data/BFISH 2016-2019 Research Fishing Lengths.csv")
-PSU <- read.csv("./Data/BFISH PSU lookup table.csv")
-psu <- st_read("./Data/GIS/Shapefiles/BFISH_PSU.shp")
+camera_lengths <- read.csv("../Data/BFISH 2016-2019 Camera Lengths.csv")
+fishing_lengths <- read.csv("../Data/BFISH 2016-2019 Research Fishing Lengths.csv")
+PSU <- read.csv("../Data/BFISH PSU lookup table.csv")
+psu <- st_read("../Data/GIS/Shapefiles/BFISH_PSU.shp")
 ### HI shapefile, unadjusted coordinates
-HI <- st_read("./Data/GIS/Shapefiles/cb_2017_us_state_20m.shp")
+HI <- st_read("../Data/GIS/Shapefiles/cb_2017_us_state_20m.shp")
 
 deep_6 <- unique(camera_lengths$COMMON_NAME)[-c(8:9)]
 

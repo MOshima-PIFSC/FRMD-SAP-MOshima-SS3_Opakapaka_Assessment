@@ -188,3 +188,4 @@ opakapaka = 19
 deep7_frs <- deep7_frs %>% 
   filter(CAUGHT == 1) %>% 
   filter(COMMON_NAME == "Ehu" & LBS < 12 | COMMON_NAME == "Gindai" & LBS < 5 | COMMON_NAME == "Hapuupuu" & LBS < 563 | COMMON_NAME == "Kalekale" & LBS < 4 | COMMON_NAME == "Lehi" & LBS < 33 | COMMON_NAME == "Onaga" & LBS < 35 | COMMON_NAME == "Opakapaka" & LBS < 19)
+

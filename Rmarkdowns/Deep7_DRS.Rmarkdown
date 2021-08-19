@@ -26,7 +26,31 @@ scale_fill_binned <- function(...) scale_color_nmfs(palette = "regional web")
 
 ```{r}
 deep7_drs <- read.csv("../Data/Data for Meg/DRS_deep7.csv")
+deep7_drs <- rename(deep7_drs, "COMMON_NAME" = "common_name")
+
 deep7_frs <- read.csv("../Data/Deep_7_FRS.csv")
+deep7_frs <- deep7_frs %>% 
+  filter(CAUGHT == 1) %>% 
+  filter(COMMON_NAME == "Ehu" & LBS < 12 
+         | COMMON_NAME == "Gindai" & LBS < 5 
+         | COMMON_NAME == "Hapuupuu" & LBS < 563 
+         | COMMON_NAME == "Kalekale" & LBS < 4 
+         | COMMON_NAME == "Lehi" & LBS < 33 
+         | COMMON_NAME == "Onaga" & LBS < 35 
+         | COMMON_NAME == "Opakapaka" & LBS < 19) 
+
+drs_sub <- deep7_drs %>% 
+  select(Year, COMMON_NAME, pounds_bought) %>% 
+  rename("LBS" = "pounds_bought") %>% 
+  mutate(data_set = "DRS")
+
+frs_sub <- deep7_frs %>% 
+  select(FYEAR, COMMON_NAME, LBS) %>% 
+  rename("Year" = "FYEAR") %>% 
+  mutate(data_set = "FRS")
+
+drs_frs <- bind_rows(drs_sub, frs_sub)
+
 ```
 
 ### Full Weight Data Set  
@@ -51,30 +75,79 @@ st_records %>%
 
 <br>
 
+
+```{r}
+drs_frs %>% 
+  ggplot(aes(x = COMMON_NAME, y = LBS, color = data_set)) +
+  geom_boxplot() +
+  facet_wrap(~COMMON_NAME, scales = "free") +
+  theme_classic() +
+    theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) +
+   labs(title = "DRS vs FRS Reported Weights")
+```
+
+
+
 ### Weight Distributions for Each Species  
 
 
 ```{r}
-deep7_frs <- deep7_frs %>% 
-  filter(CAUGHT == 1) %>% 
-  filter(COMMON_NAME == "Ehu" & LBS < 12 
-         | COMMON_NAME == "Gindai" & LBS < 5 
-         | COMMON_NAME == "Hapuupuu" & LBS < 563 
-         | COMMON_NAME == "Kalekale" & LBS < 4 
-         | COMMON_NAME == "Lehi" & LBS < 33 
-         | COMMON_NAME == "Onaga" & LBS < 35 
-         | COMMON_NAME == "Opakapaka" & LBS < 19) %>% 
-  rename("common_name" = "COMMON_NAME")
+
+
+drs_frs %>% 
+  group_by(COMMON_NAME) %>% 
+  ggplot(aes(x = LBS, color = data_set)) +
+  geom_density(size = .65) + 
+  facet_wrap(~COMMON_NAME, scales = "free") +
+  theme_classic() +
+  labs(title = "DRS vs FRS Weight Distributions")
+  
+
+drs_frs %>% 
+  group_by(data_set, COMMON_NAME) %>% 
+  summarise(N = n()) %>% 
+  pivot_wider(names_from = "data_set", values_from = "N") %>% 
+  gt() %>% 
+  fmt_number(
+    columns = 2:3,
+    decimals = 0,
+    use_seps = TRUE, 
+    sep_mark = ",") %>% 
+  cols_label(COMMON_NAME = "Common Name") %>% 
+  tab_header(title = "Number of Weight Records in DRS and FRS")
+
+```
+<br>  
+
+
+```{r}
+deep7_drs %>% 
+  mutate(Decade = floor(Year / 10) * 10,
+         Decade = factor(Decade, levels = seq(2000, 2020, by = 10))) %>% 
+  ggplot(aes(x = pounds_bought, y = Decade, color = Decade, fill = Decade)) +
+  geom_density_ridges(alpha = 0.5) +
+  facet_wrap(~COMMON_NAME, scales = "free") +
+  scale_fill_nmfs("regional web") +
+  theme_classic() +
+  labs(title = "Weight Distributions by Decade")
 
 
 deep7_drs %>% 
-  group_by(common_name) %>% 
-  ggplot(aes(x = pounds_bought)) +
-  geom_density(colour = "#D02C2F", size = .75) + 
-  geom_density(aes(x = LBS), data = deep7_frs, color = "#007078", size = .75) +
-  facet_wrap(~common_name, scales = "free") +
-  theme_classic() +
-  labs(title = "DRS vs FRS Weight Distributions", caption = "Red line represents DRS data and teal line represents FRS data.")
-  
+  mutate(Decade = floor(Year / 10) * 10,
+         Decade = factor(Decade, levels = seq(2000, 2020, by = 10))) %>% 
+  group_by(COMMON_NAME, Decade) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = "Decade", values_from = "N") %>% 
+  gt() %>% 
+  fmt_number(
+    columns = 2:4,
+    decimals = 0,
+    use_seps = TRUE, 
+    sep_mark = ",") %>% 
+  cols_label(COMMON_NAME = "Common Name") %>% 
+  tab_header(title = "Number of Weight Records in DRS by Decade")
 
 ```
