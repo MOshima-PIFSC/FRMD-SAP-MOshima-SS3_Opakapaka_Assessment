@@ -11,4 +11,4 @@
   4. [Deep 7 FRS Weight Frequency Investigation](https://moshima-pifsc.github.io/FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Rmarkdowns/Deep7_FRS_Investigation.html)
   
 
-  5. [Deep 7 DRS Weight Frequency Investigation](https://moshima-pifsc.github.io/FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Rmarkdowns/Deep7_FRS_Investigation.html)
+  5. [Deep 7 DRS Weight Frequency Investigation](https://moshima-pifsc.github.io/FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Rmarkdowns/Deep7_DRS.html)
