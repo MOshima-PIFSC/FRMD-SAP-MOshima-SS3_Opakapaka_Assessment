@@ -26,7 +26,10 @@ scale_fill_binned <- function(...) scale_color_nmfs(palette = "regional web")
 
 ```{r}
 deep7_drs <- read.csv("../Data/Data for Meg/DRS_deep7.csv")
-deep7_drs <- rename(deep7_drs, "COMMON_NAME" = "common_name")
+deep7_drs <- deep7_drs %>% 
+  select(-c(Year, X)) %>% 
+  rename(c("COMMON_NAME" = "common_name",
+           "Year" = "FYear"))
 
 deep7_frs <- read.csv("../Data/Deep_7_FRS.csv")
 deep7_frs <- deep7_frs %>% 
@@ -151,3 +154,89 @@ deep7_drs %>%
   tab_header(title = "Number of Weight Records in DRS by Decade")
 
 ```
+
+
+```{r}
+drs_list <- deep7_drs %>% 
+  group_split(COMMON_NAME)  
+
+names(drs_list) <- c("Ehu", "Gindai", "Hapuupuu", "Kalekale", "Lehi", "Onaga", "Opakapaka")
+
+ggplot(aes(x = pounds_bought), data = drs_list[[1]]) +
+  geom_density(fill = "#D0D0D0") +
+  facet_wrap(~Year) +
+  theme_classic() +
+  labs(title = paste(names(drs_list)[1]))
+
+```
+
+!![figure from Jason Helyer](./DRS_Figures_Jason/ehu_size_freq.jpg)
+
+```{r}
+
+ggplot(aes(x = pounds_bought), data = drs_list[[2]]) +
+  geom_density(fill = "#D0D0D0") +
+  facet_wrap(~Year) +
+  theme_classic() +
+  labs(title = paste(names(drs_list)[2]))
+
+```
+
+![figure from Jason Helyer](./DRS_Figures_Jason/Gindai_size_freq.jpg)
+
+```{r}
+ggplot(aes(x = pounds_bought), data = drs_list[[3]]) +
+  geom_density(fill = "#D0D0D0") +
+  facet_wrap(~Year) +
+  theme_classic() +
+  labs(title = paste(names(drs_list)[3]))
+
+
+```
+
+![figure from Jason Helyer](./DRS_Figures_Jason/Hapupu_size_freq.jpg)
+
+
+```{r}
+ggplot(aes(x = pounds_bought), data = drs_list[[4]]) +
+  geom_density(fill = "#D0D0D0") +
+  facet_wrap(~Year) +
+  theme_classic() +
+  labs(title = paste(names(drs_list)[4]))
+
+
+```
+
+![figure from Jason Helyer](./DRS_Figures_Jason/Kale_size_freq.jpg)
+
+```{r}
+ggplot(aes(x = pounds_bought), data = drs_list[[5]]) +
+  geom_density(fill = "#D0D0D0") +
+  facet_wrap(~Year) +
+  theme_classic() +
+  labs(title = paste(names(drs_list)[5]))
+
+
+```
+
+![figure from Jason Helyer](./DRS_Figures_Jason/Lehi_size_freq.jpg)
+
+```{r}
+ggplot(aes(x = pounds_bought), data = drs_list[[6]]) +
+  geom_density(fill = "#D0D0D0") +
+  facet_wrap(~Year) +
+  theme_classic() +
+  labs(title = paste(names(drs_list)[6]))
+```
+
+![figure from Jason Helyer](./DRS_Figures_Jason/Onaga_size_freq.jpg)
+
+```{r}
+ggplot(aes(x = pounds_bought), data = drs_list[[7]]) +
+  geom_density(fill = "#D0D0D0") +
+  facet_wrap(~Year) +
+  theme_classic() +
+  labs(title = paste(names(drs_list)[7]))
+```
+
+![figure from Jason Helyer](./DRS_Figures_Jason/paka_size_freq.jpg)

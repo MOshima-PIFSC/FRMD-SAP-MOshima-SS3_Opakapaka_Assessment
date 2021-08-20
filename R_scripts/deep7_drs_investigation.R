@@ -21,10 +21,11 @@ deep7_drs <- drs %>%
                                       "Kalekale, Kalikali" = "Kalekale",
                                       "'Ukikiki, Gindai, Tai" = "Gindai"))) %>% 
   filter(pieces_bought == 1) %>% 
-  separate(report_date, into = c("Year", "Month", "Day"), sep = "-") %>% 
+  separate(report_date, into = c("Year", "Month", "Day"), sep = "-", convert = TRUE) %>% 
+  mutate(FYear = ifelse(Month < 7, Year, Year + 1)) %>% 
   select(c(Year, 
-           Month, 
-           Day, 
+           FYear,
+           Month,
            common_name, 
            pieces_bought, 
            pounds_bought, 
@@ -60,5 +61,6 @@ deep7_drs %>%
   geom_density(aes(x = LBS), data = deep7_frs, color = "#007078", size = .75) +
   facet_wrap(~common_name, scales = "free") +
   theme_classic()
-  
 
+
+table(drs$dealer_number)

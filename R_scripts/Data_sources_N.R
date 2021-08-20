@@ -39,7 +39,7 @@ cam_sum <- camera_lengths %>%
   filter(COMMON_NAME %in% deep7) %>% 
   select(COMMON_NAME, OFFICIAL_DEPTH_M, LENGTH_CM, BFISH) %>% 
   mutate(Year = as.integer(str_extract_all(BFISH, "[0-9]+", simplify = TRUE))) %>% 
-  group_by(COMMON_NAME) %>% #for first figure remove Year from group_by
+  group_by(COMMON_NAME, Year) %>% #for first figure remove Year from group_by
   summarise(N = n()) %>% 
   mutate(Data_Source = "BFISH_camera_length")
 
@@ -47,23 +47,23 @@ rfish_sum <- fishing_lengths %>%
   filter(COMMON_NAME %in% deep7) %>% 
   select(COMMON_NAME, LENGTH_CM, BFISH) %>% 
   mutate(Year = as.integer(str_extract_all(BFISH, "[0-9]+", simplify = TRUE))) %>% 
-  group_by(COMMON_NAME) %>% 
+  group_by(COMMON_NAME, Year) %>% 
   summarise(N = n()) %>% 
   mutate(Data_Source = "BFISH_fishing_length")
 
 frs_sum <- deep7_frs %>% 
-  group_by(COMMON_NAME) %>% 
   rename(Year = FYEAR) %>% 
+  group_by(COMMON_NAME, Year) %>% 
   summarise(N = n()) %>% 
   mutate(Data_Source = "FRS_lbs_caught",
-         N = N/10) 
+         N = N/100) 
 
 drs_sum <- deep7_drs %>% 
-  rename("COMMON_NAME" = "common_name") %>% 
-  group_by(COMMON_NAME) %>% 
+  #rename("COMMON_NAME" = "common_name") %>% 
+  group_by(COMMON_NAME, Year) %>% 
   summarise(N = n()) %>% 
   mutate(Data_Source = "DRS_lbs_caught",
-         N = N/10)
+         N = N/100)
 
 lh_sum <- lh %>% 
   mutate(COMMON_NAME = str_replace_all(TAXONNAME, 
@@ -84,10 +84,10 @@ lh_sum <- lh %>%
          "Length-Weight" = "N.2") %>% 
   pivot_longer(cols = -c(COMMON_NAME, Year), names_to = "Data_Source", values_to = "N") %>% 
   filter(!is.na(N)) %>% 
-  group_by(COMMON_NAME, Data_Source) %>% 
+  group_by(COMMON_NAME, Data_Source, Year) %>% 
   summarise(N = n()) %>% 
   mutate(N = N*5) %>% 
-  select(COMMON_NAME, N, Data_Source)
+  select(COMMON_NAME, Year, N, Data_Source)
   
 
 data.df <- bind_rows(cam_sum, rfish_sum, frs_sum, drs_sum, lh_sum) %>% 
@@ -115,13 +115,13 @@ x.pos <- group_indices(data.df)
 ##
 ggplot(data = data.df, aes(x = Data_Source, y = COMMON_NAME, alpha = N)) + 
   geom_point(aes(size = N+5), color = "#0093D0", show.legend = FALSE) +
-  geom_text(aes(label = N, x = x.pos + .23), alpha = 1.0, size = 4, color = "#0093D0") +
+  geom_text(aes(label = N, x = x.pos + .23), alpha = 1.0, size = 4, color = "#00467F") +
   scale_alpha_continuous(range = c(0.3, 0.7)) + 
   scale_size_area(max_size = 20) +
   scale_x_discrete(guide = guide_axis(n.dodge = 2))+
   labs(x = "Data Source", 
        y = "Common Name",
-       caption = "Amount of data available per species (Nrows). Note FRS_lbs_caught and DRS_lbs_caught are x10.") +
+       caption = "Amount of data available per species (Nrows). Note FRS_lbs_caught and DRS_lbs_caught are x100.") +
   theme_classic()  +
   ggsave(filename = "./FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Data/Data_sources_N.png")
 
@@ -141,5 +141,6 @@ ggplot(data = data.df, aes(x = Year, y = COMMON_NAME, alpha = N, color = Data_So
         panel.border = element_blank(),         # disable panel border
         panel.grid.major.x = element_blank(),   # disable lines in grid on X-axis
         panel.grid.minor.x = element_blank()) +
+  labs(caption = "Note FRS_lbs_caught and DRS_lbs_caught are x100.") +
   ggsave(filename = "./FRMD-SAP-MOshima-SS3_Opakapaka_Assessment/Data/Data_Sources_N_Year.png", width = 30, height = 15, units = "cm")
 
