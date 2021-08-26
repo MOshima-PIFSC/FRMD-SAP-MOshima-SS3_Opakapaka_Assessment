@@ -36,7 +36,7 @@ deep7_frs <- read.csv("../Data/Deep_7_FRS.csv")
 
 ## Filter weights by state record catches 
 deep7_frs <- deep7_frs %>% 
-  filter(COMMON_NAME == "Ehu" & LBS < 12 | COMMON_NAME == "Gindai" & LBS < 5 | COMMON_NAME == "Hapuupuu" & LBS < 563 | COMMON_NAME == "Kalekale" & LBS < 4 | COMMON_NAME == "Lehi" & LBS < 33 | COMMON_NAME == "Onaga" & LBS < 35 | COMMON_NAME == "Opakapaka" & LBS < 19)
+  filter(COMMON_NAME == "Ehu" & LBS < 12 | COMMON_NAME == "Gindai" & LBS < 5 | COMMON_NAME == "Hapuupuu" & LBS < 70 | COMMON_NAME == "Kalekale" & LBS < 4 | COMMON_NAME == "Lehi" & LBS < 33 | COMMON_NAME == "Onaga" & LBS < 35 | COMMON_NAME == "Opakapaka" & LBS < 19)
 
 ```
 
@@ -48,7 +48,7 @@ Data are FRS records for single catch fish with weights up to the state record w
 
 
 com_names <- c("Hapuupuu","Kalekale","Opakapaka","Ehu","Onaga", "Lehi","Gindai")
-st_records <- data.frame(COMMON_NAME = com_names,  RECORD = c(563,4,19,12,35,33,5))
+st_records <- data.frame(COMMON_NAME = com_names,  RECORD = c(70,4,19,12,35,33,5))
 
 st_records %>% 
   arrange(desc(RECORD)) %>% 

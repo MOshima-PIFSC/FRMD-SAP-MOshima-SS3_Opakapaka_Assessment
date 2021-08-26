@@ -35,7 +35,7 @@ deep7_drs <- drs %>%
            dealer_number)) %>% 
   filter(common_name == "Ehu" & pounds_bought < 12 
          | common_name == "Gindai" & pounds_bought < 5 
-         | common_name == "Hapuupuu" & pounds_bought < 563 
+         | common_name == "Hapuupuu" & pounds_bought < 70 
          | common_name == "Kalekale" & pounds_bought < 4 
          | common_name == "Lehi" & pounds_bought < 33 
          | common_name == "Onaga" & pounds_bought < 35 
