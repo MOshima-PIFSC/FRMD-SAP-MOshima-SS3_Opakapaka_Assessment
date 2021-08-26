@@ -29,7 +29,10 @@ deep7_drs <- drs %>%
            common_name, 
            pieces_bought, 
            pounds_bought, 
-           total_value)) %>% 
+           total_value,
+           data_source,
+           report_type, 
+           dealer_number)) %>% 
   filter(common_name == "Ehu" & pounds_bought < 12 
          | common_name == "Gindai" & pounds_bought < 5 
          | common_name == "Hapuupuu" & pounds_bought < 563 
