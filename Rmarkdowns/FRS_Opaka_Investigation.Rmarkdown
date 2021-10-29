@@ -41,7 +41,7 @@ Data are FRS records for single catch fish with a weight of < 19lbs. Data were c
 ```{r}
 
 opaka_frs <- deep7_frs %>% 
-  filter(str_detect(COMMON_NAME, "Opakapaka") & LBS < 19) %>% 
+  filter(str_detect(COMMON_NAME, "Opakapaka")) %>% 
   mutate(Decade = floor(FYEAR / 10) * 10,
          Decade = factor(Decade, levels = seq(1940, 2010, by = 10))) %>% 
   select(-X) %>% 

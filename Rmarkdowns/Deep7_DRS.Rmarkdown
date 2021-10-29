@@ -28,20 +28,10 @@ scale_fill_binned <- function(...) scale_color_nmfs(palette = "regional web")
 deep7_drs <- read.csv("../Data/Data for Meg/DRS_deep7.csv")
 deep7_drs <- deep7_drs %>% 
   select(-c(Year, X)) %>% 
-  rename(c("COMMON_NAME" = "common_name",
-           "Year" = "FYear")) %>% 
+  rename("Year" = "FYear") %>% 
   filter(str_detect(data_source, "Online Fishing Reports", negate = TRUE))
 
 deep7_frs <- read.csv("../Data/Deep_7_FRS.csv")
-deep7_frs <- deep7_frs %>% 
-  filter(CAUGHT == 1) %>% 
-  filter(COMMON_NAME == "Ehu" & LBS < 12 
-         | COMMON_NAME == "Gindai" & LBS < 5 
-         | COMMON_NAME == "Hapuupuu" & LBS < 70 
-         | COMMON_NAME == "Kalekale" & LBS < 4 
-         | COMMON_NAME == "Lehi" & LBS < 33 
-         | COMMON_NAME == "Onaga" & LBS < 35 
-         | COMMON_NAME == "Opakapaka" & LBS < 19) 
 
 drs_sub <- deep7_drs %>% 
   select(Year, COMMON_NAME, pounds_bought) %>% 

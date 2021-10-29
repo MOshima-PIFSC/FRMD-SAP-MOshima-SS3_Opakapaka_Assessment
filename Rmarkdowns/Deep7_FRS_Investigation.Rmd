@@ -33,11 +33,6 @@ mhi_cropped <- st_crop(HDAR_areas, xmin = -162, xmax = -153,
 
 deep7_frs <- read.csv("../Data/Deep_7_FRS.csv")
 
-
-## Filter weights by state record catches 
-deep7_frs <- deep7_frs %>% 
-  filter(COMMON_NAME == "Ehu" & LBS < 12 | COMMON_NAME == "Gindai" & LBS < 5 | COMMON_NAME == "Hapuupuu" & LBS < 70 | COMMON_NAME == "Kalekale" & LBS < 4 | COMMON_NAME == "Lehi" & LBS < 33 | COMMON_NAME == "Onaga" & LBS < 35 | COMMON_NAME == "Opakapaka" & LBS < 19)
-
 ```
 
 
