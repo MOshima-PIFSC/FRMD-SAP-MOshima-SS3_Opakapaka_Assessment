@@ -2,7 +2,10 @@
 title: "Deep 7 Shark Depredation Investigation"
 author: "Meg Oshima"
 date: "10/21/2021"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -94,7 +97,8 @@ frs_deep7_clean <- frs_deep7 %>%
                                 "caught", 
                                 "number_lost_to_predator")) %>% 
   mutate(lbs = ifelse(caught == 0 & number_lost_to_predator > 0, NA, lbs)) %>% 
-  filter(!is.na(lbs)|!is.na(caught))
+  filter(!is.na(lbs)|!is.na(caught)) %>% 
+  filter(fyear < 2022)
 
 ```
 
@@ -103,7 +107,7 @@ frs_deep7_clean <- frs_deep7 %>%
 The data used in this analysis was requested from WPacFIN and is the FRS dataset from 2002 to 2021. Depredation data was not collected until Oct. 1, 2002. The data are filtered to include only areas fished around the main Hawaiian Islands (area = "MHI") and the deep 7 and Uku species. 15 gear-types are recorded, but the majority of the records are for gear 3 (n = 126,045).
 
 ```{r }
-describe(frs_deep7_clean)
+summary(frs_deep7_clean)
 
 ```
 
@@ -234,14 +238,28 @@ frs_deep7_clean %>%
          y = "Number of Trips")
 ```
 
+
 ```{r}
 frs_deep7_clean %>% 
-  select(tripID, Island, gear, fyear, Month, Sp, caught, number_lost_to_predator, lbs, predator) %>% 
-  filter(fyear < 2022) %>% 
+  group_by(Sp, fyear) %>% 
+  summarise(lost = sum(number_lost_to_predator, na.rm = TRUE),
+            caught = sum(caught, na.rm = TRUE),
+            release = sum(release, na.rm = TRUE),
+            dep_rate = (lost/(lost+caught+release))*100) %>% 
+  ggplot(aes(x = fyear, y = dep_rate, color = Sp)) +
+  geom_line(size = 1.2, alpha = .65, show.legend = FALSE) +
+  facet_wrap(~Sp) +
+  theme_classic() +
+  labs(x = "Fishing Year",
+       y = "Depredation Rate",
+       title = "Depredation rates over time by species")
+
+frs_deep7_clean %>% 
   group_by(fyear, Sp) %>% 
   summarise(annual_catch = sum(caught, na.rm = TRUE), 
             annual_dep = sum(number_lost_to_predator, na.rm = TRUE),
-            catch_dep_ratio = annual_dep/(annual_dep + annual_catch)) %>% 
+            annual_rel = sum(release, na.rm = TRUE),
+            catch_dep_ratio = annual_dep/(annual_dep + annual_catch + annual_rel)) %>% 
   filter(str_detect(Sp, "Opakapaka|Onaga|Uku")) %>% 
   ggplot(aes(x = fyear, y = catch_dep_ratio, color = Sp)) +
   geom_line(size = 1.2, alpha = .7) + 
@@ -250,26 +268,26 @@ frs_deep7_clean %>%
        x = "Fishing Year", 
        y = "Proportion of Catch",
        caption = "Catch records from 2002-2021")
+
 ```
 
-The proportion of catch lost to predators for the three main species that experience depredation (Opaka, Onaga, and Uku) is shown in the figure above. The proportion $P$ is calculated by $P = D_y/(D_y + C_y)$ where $D_y$ is the total number of fish per species lost to predators in year $y$, and $C_y$ is the total number of fish per species caught in year $y$.
+The proportion of catch lost to predators for the three main species that experience depredation (Opaka, Onaga, and Uku) is shown in the figure above. The proportion $P$ is calculated by $P = D_y/(D_y + C_y + R_y)$ where $D_y$ is the total number of fish per species lost to predators in year $y$, $C_y$ is the total number of fish per species caught in year $y$, and $R_y$ is the number released in year $y$. *Note: most release is 0 so there is minimal difference between including and excluding released but included it to be consistent with other studies.*
 
 ```{r}
 ## percent of depredation total by species (table and figure)
   frs_deep7_clean %>% 
-    #filter(str_detect(Sp, "Opakapaka")) %>% 
-    filter(fyear < 2022) %>% 
     group_by(Sp) %>% 
-    select(tripID, fyear, caught, number_lost_to_predator, Sp, Island) %>% 
     summarise(lost = sum(number_lost_to_predator, na.rm = TRUE),
               catch = sum(caught, na.rm = TRUE),
-              prop_dep = round((lost/(catch + lost))*100,2)) %>% 
+              rel = sum(release, na.rm = TRUE),
+              prop_dep = round((lost/(catch + lost + rel))*100,2)) %>% 
     arrange(desc(prop_dep)) %>% 
     gt() %>% 
     cols_label(
       Sp = "Species",
       lost = "Number Lost",
       catch = "Number Caught", 
+      rel = "Number Released",
       prop_dep = "Percent Lost to Predation"
     ) %>% 
     tab_header(title = "Total percent of catch lost to predation by species")
@@ -285,23 +303,26 @@ frs_deep7_clean %>%
   group_by(Sp, Island) %>% 
   summarise(lost = sum(number_lost_to_predator, na.rm = TRUE),
             catch = sum(caught, na.rm = TRUE),
-            prop_dep = round(100*(lost/(lost + catch)), 2)) %>% 
+            rel = sum(release, na.rm = TRUE),
+            prop_dep = round(100*(lost/(lost + catch + rel)), 2)) %>% 
   arrange(desc(prop_dep)) %>% 
   gt() %>% 
   cols_label(
     Sp = "Species",
     lost = "Total Lost",
+    rel = "Total Released",
     catch = "Total Caught",
     prop_dep = "Percent of Catch Lost"
-  )
+  ) %>% 
+  tab_style(style = list(cell_text(weight = 'bold')), 
+            locations = cells_row_groups(groups = c("Onaga", "Uku", "Opakapaka", "Lehi", "Hapuupuu", "Kalekale", "Ehu", "Gindai")))
 ```
 
 ```{r}
   frs_deep7_clean %>% 
   filter(str_detect(Sp, "Opakapaka")) %>% 
-  filter(fyear < 2022) %>% 
     group_by(fyear, Island) %>% 
-    select(tripID, fyear, caught, number_lost_to_predator, Sp, Island) %>% 
+    select(tripID, fyear, caught, number_lost_to_predator, Sp, Island, release) %>% 
     summarise(n = sum(number_lost_to_predator, na.rm = TRUE)) %>% 
     ggplot(aes(x = fyear, y = n, color = Island)) +
     geom_line(size = 1) + 
@@ -314,11 +335,11 @@ frs_deep7_clean %>%
 
 mean_props <- frs_deep7_clean %>% 
     filter(str_detect(Sp, "Opakapaka")) %>% 
-    filter(fyear < 2022) %>% 
     group_by(Island, fyear) %>% 
     summarise(lost = sum(number_lost_to_predator, na.rm = TRUE),
               catch = sum(caught, na.rm = TRUE),
-              prop_dep = lost/(catch + lost)) %>% 
+              rel = sum(release, na.rm = TRUE),
+              prop_dep = lost/(catch + lost + rel)) %>% 
   ungroup() %>% 
   group_by(Island) %>% 
   summarise(mean_prop = mean(prop_dep))
@@ -326,11 +347,11 @@ mean_props <- frs_deep7_clean %>%
 
   frs_deep7_clean %>% 
     filter(str_detect(Sp, "Opakapaka")) %>% 
-    filter(fyear < 2022) %>% 
     group_by(fyear, Island) %>% 
     summarise(lost = sum(number_lost_to_predator, na.rm = TRUE),
               catch = sum(caught, na.rm = TRUE),
-              prop_dep = lost/(catch + lost)) %>% 
+              rel = sum(release, na.rm = TRUE),
+              prop_dep = lost/(catch + lost + rel)) %>% 
     ggplot(aes(x = fyear, y = prop_dep, color = Island)) +
     geom_point(size = 1.25) +
     geom_line(size = 1) +
@@ -346,7 +367,6 @@ mean_props <- frs_deep7_clean %>%
 ```{r}
   frs_deep7_clean %>% 
   filter(str_detect(Sp, "Onaga")) %>% 
-  filter(fyear < 2022) %>% 
     group_by(fyear, Island) %>% 
     select(tripID, fyear, caught, number_lost_to_predator, Sp, Island) %>% 
     summarise(n = sum(number_lost_to_predator, na.rm = TRUE)) %>% 
@@ -361,22 +381,22 @@ mean_props <- frs_deep7_clean %>%
 
 mean_props <- frs_deep7_clean %>% 
     filter(str_detect(Sp, "Onaga")) %>% 
-    filter(fyear < 2022) %>% 
     group_by(Island, fyear) %>% 
     summarise(lost = sum(number_lost_to_predator, na.rm = TRUE),
               catch = sum(caught, na.rm = TRUE),
-              prop_dep = lost/(catch + lost)) %>% 
+              rel = sum(release, na.rm = TRUE),
+              prop_dep = lost/(catch + lost + rel)) %>% 
   ungroup() %>% 
   group_by(Island) %>% 
   summarise(mean_prop = mean(prop_dep))
 
 frs_deep7_clean %>% 
-    filter(str_detect(Sp, "Onaga")) %>% 
-  filter(fyear < 2022) %>% 
+    filter(str_detect(Sp, "Onaga")) %>%
     group_by(fyear, Island) %>% 
     summarise(lost = sum(number_lost_to_predator, na.rm = TRUE),
               catch = sum(caught, na.rm = TRUE),
-              prop_dep = lost/(catch + lost)) %>% 
+              rel = sum(release, na.rm = TRUE),
+              prop_dep = lost/(catch + lost + rel)) %>% 
     ggplot(aes(x = fyear, y = prop_dep, color = Island)) +
     geom_point(size = 1.25) +
     geom_line(size = 1) +
@@ -392,7 +412,6 @@ frs_deep7_clean %>%
 ```{r}
   frs_deep7_clean %>% 
   filter(str_detect(Sp, "Uku")) %>% 
-  filter(fyear < 2022) %>% 
     group_by(fyear, Island) %>% 
     select(tripID, fyear, caught, number_lost_to_predator, Sp, Island) %>% 
     summarise(n = sum(number_lost_to_predator)) %>% 
@@ -408,22 +427,22 @@ frs_deep7_clean %>%
 
 mean_props <- frs_deep7_clean %>% 
     filter(str_detect(Sp, "Uku")) %>% 
-    filter(fyear < 2022) %>% 
     group_by(Island, fyear) %>% 
     summarise(lost = sum(number_lost_to_predator, na.rm = TRUE),
               catch = sum(caught, na.rm = TRUE),
-              prop_dep = lost/(catch + lost)) %>% 
+              rel = sum(release, na.rm = TRUE),
+              prop_dep = lost/(catch + lost + rel)) %>% 
   ungroup() %>% 
   group_by(Island) %>% 
   summarise(mean_prop = mean(prop_dep))
 
 frs_deep7_clean %>% 
     filter(str_detect(Sp, "Uku")) %>% 
-  filter(fyear < 2022) %>% 
     group_by(fyear, Island) %>% 
     summarise(lost = sum(number_lost_to_predator, na.rm = TRUE),
               catch = sum(caught, na.rm = TRUE),
-              prop_dep = lost/(catch + lost)) %>% 
+              rel = sum(release, na.rm = TRUE),
+              prop_dep = lost/(catch + lost + rel)) %>% 
     ggplot(aes(x = fyear, y = prop_dep, color = Island)) +
     geom_point(size = 1.25) +
     geom_line(size = 1) +
@@ -443,11 +462,11 @@ frs_deep7_clean %>%
 ```{r}
 frs_deep7_clean %>% 
   group_by(gear, Sp) %>% 
-  select(fyear, tripID, gear, Sp, number_lost_to_predator, caught) %>% 
+  select(fyear, tripID, gear, Sp, number_lost_to_predator, caught, release) %>% 
   summarise(caught = sum(caught, na.rm = TRUE), 
             lost = sum(number_lost_to_predator, na.rm = TRUE),
-            prop_dep = lost/(lost + caught)) %>% 
-  #filter(prop_dep > 0) %>% 
+            rel = sum(release, na.rm = TRUE),
+            prop_dep = lost/(lost + caught + rel)) %>% 
   ggplot(aes(x = gear, y = prop_dep)) + 
   geom_col(fill = "#306A7B", alpha = .7) +
   theme_classic() +
@@ -462,7 +481,8 @@ frs_deep7_clean %>%
   group_by(gear, Sp) %>% 
   summarise(caught = sum(caught, na.rm = TRUE),
             lost = sum(number_lost_to_predator, na.rm = TRUE),
-            prop_dep = lost/(lost+caught)) %>% 
+            rel = sum(release, na.rm = TRUE),
+            prop_dep = lost/(lost+caught + rel)) %>% 
  # filter(prop_dep > 0) %>% 
   ggplot(aes(x = gear, y = prop_dep, fill = Sp)) +
   geom_col(alpha = .7) +
@@ -476,7 +496,8 @@ frs_deep7_clean %>%
   group_by(gear, Sp) %>% 
   summarise(caught = sum(caught, na.rm = TRUE),
             lost = sum(number_lost_to_predator, na.rm = TRUE),
-            prop_dep = lost/(lost+caught)) %>% 
+            rel = sum(release, na.rm = TRUE),
+            prop_dep = lost/(lost+caught + rel)) %>% 
   filter(gear == 3| gear == 4 | gear == 5 | gear == 9 | gear == 10 | gear == 61) %>% 
   ggplot(aes(x = Sp, y = prop_dep, fill = Sp)) +
   geom_col(alpha = .7, position = "dodge") +
@@ -515,7 +536,8 @@ sum.9 <- frs_deep7_clean %>%
   group_by(Sp) %>% 
   summarise(n = sum(caught, na.rm = TRUE), 
             lost = sum(number_lost_to_predator, na.rm = TRUE),
-            prop_dep = lost/(lost+n)) %>% 
+            rel = sum(release, na.rm = TRUE),
+            prop_dep = lost/(lost+n+rel)) %>% 
   arrange(desc(n)) 
 
 top3.9 <- sum.9 %>% slice(1:3)
@@ -525,7 +547,8 @@ sum.10 <- frs_deep7_clean %>%
   group_by(Sp) %>% 
   summarise(caught = sum(caught, na.rm = TRUE),
             lost = sum(number_lost_to_predator, na.rm = TRUE),
-            prop_dep = lost/(lost+caught)) 
+            rel = sum(release, na.rm = TRUE),
+            prop_dep = lost/(lost+caught+rel)) 
  
 ```
 
@@ -545,3 +568,49 @@ frs_deep7_clean %>%
 
 
 ```
+
+#### Wind Speed  
+
+For all instances where wind speed was recorded, there were no records of fish being lost to predators.
+```{r warning = FALSE}
+frs_deep7_clean %>% 
+  select(tripID, Sp, number_lost_to_predator,  wind_speed) %>% 
+  ggplot(aes(x = number_lost_to_predator, y = wind_speed)) +
+  geom_point(color = "#00467F", alpha = .7) + 
+  theme_classic()
+```
+
+#### Hours Fished  
+
+```{r warning = FALSE}
+frs_deep7_clean %>% 
+  select(tripID, Sp, number_lost_to_predator, hours) %>% 
+  ggplot(aes(x = hours, y = number_lost_to_predator)) +
+  geom_point(color = "#00467F", alpha = .7) + 
+  theme_classic() +
+  labs(y = "Number of fish lost to predators", 
+       x = "Hours fished")
+
+
+frs_deep7_clean %>% 
+  select(tripID, Sp, number_lost_to_predator, hours) %>% 
+  filter(hours < 100) %>%  #4 days
+  ggplot(aes(x = hours, y = number_lost_to_predator)) +
+  geom_point(color = "#00467F", alpha = .7) + 
+  theme_classic() +
+  labs(y = "Number of fish lost to predators", 
+       x = "Hours fished",
+       caption = "Restricted to hours < 100 or 4 days")
+
+frs_deep7_clean %>% 
+  select(tripID, Sp, number_lost_to_predator, hours) %>% 
+  filter(hours < 100) %>%  #4 days
+  ggplot(aes(x = hours, y = number_lost_to_predator, color = Sp)) +
+  geom_point(alpha = .65) +
+  facet_wrap(~Sp, scales = "free") +
+  theme_classic() +
+  labs(y = "Number of fish lost to predators", 
+       x = "Hours fished",
+       caption = "Restricted to hours < 100 or 4 days")
+```
+
