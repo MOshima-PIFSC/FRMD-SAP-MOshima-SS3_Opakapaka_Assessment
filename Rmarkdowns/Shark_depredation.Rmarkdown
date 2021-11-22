@@ -629,3 +629,15 @@ frs_deep7_clean %>%
        caption = "Restricted to hours < 100 or 4 days")
 ```
 
+#### Hooks Used  
+
+```{r}
+frs_deep7_clean %>%
+  filter(!is.na(hooks)) %>% 
+  ggplot(aes(x = hooks, y = number_lost_to_predator, color = Sp)) +
+  geom_point(alpha = .7) +
+  facet_wrap(~Sp, scales = "free") +
+  theme_classic() +
+  scale_x_continuous("Number of Hooks", breaks = seq(1,10,by=1), labels = seq(1,10,by=1))
+```
+
