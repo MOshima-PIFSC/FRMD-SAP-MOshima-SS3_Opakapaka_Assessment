@@ -771,7 +771,7 @@ frs_deep7_clean %>%
   geom_point(size = 1.25, alpha = .65, show.legend = FALSE) +
   geom_line(size = 1, alpha = .65, show.legend = FALSE) +
   geom_hline(aes(yintercept = means, color = dataset, linetype = dataset), size = .75) +
-  facet_wrap(~Island) +
+  facet_wrap(~Island, scales = "free") +
   labs(title = "Proportion of predation on Opakapaka Catches by Island", 
        x = "Fishing Year",
        y = "Proportion of catch lost to predator",
@@ -833,7 +833,7 @@ frs_deep7_clean %>%
   geom_point(size = 1.25, alpha = .65, show.legend = FALSE) +
   geom_line(size = 1, alpha = .65, show.legend = FALSE) +
   geom_hline(aes(yintercept = means, color = dataset, linetype = dataset), size = .75) +
-  facet_wrap(~Island) +
+  facet_wrap(~Island, scales = "free") +
   labs(title = "Proportion of predation on Onaga Catches by Island", 
        x = "Fishing Year",
        y = "Proportion of catch lost to predator",
@@ -896,7 +896,7 @@ frs_deep7_clean %>%
   geom_point(size = 1.25, alpha = .65, show.legend = FALSE) +
   geom_line(size = 1, alpha = .65, show.legend = FALSE) +
   geom_hline(aes(yintercept = means, color = dataset, linetype = dataset), size = .75) +
-  facet_wrap(~Island) +
+  facet_wrap(~Island, scales = "free") +
   labs(title = "Proportion of predation on Uku Catches by Island", 
        x = "Fishing Year",
        y = "Proportion of catch lost to predator",
